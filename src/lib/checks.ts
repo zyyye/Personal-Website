@@ -4,6 +4,7 @@
  * Build-time only; never imported by client code.
  */
 import { createHash } from 'node:crypto';
+import { leadingNumber } from './pages.ts';
 import type { Education, Experience, Learning, Profile, Project, ReplayFile } from './schemas.ts';
 
 export interface Entry<T> {
@@ -29,6 +30,7 @@ export interface ContentSet {
 
 export const LIMITS = {
   maxFeatured: 3,
+  maxHighlightedResults: 6,
   talentMin: 3,
   talentMax: 4,
   talentWords: 16,
@@ -90,6 +92,21 @@ export function runChecks(c: ContentSet): string[] {
     }
     if (d.results && d.results.length > 0 && d.evidence.length === 0) {
       err(`${p.file}: has results but no evidence`);
+    }
+    const highlighted = (d.results ?? []).filter((r) => r.highlight);
+    if (highlighted.length > LIMITS.maxHighlightedResults) {
+      err(
+        `${p.file}: ${highlighted.length} highlighted results (max ${LIMITS.maxHighlightedResults})`,
+      );
+    }
+    if (new Set(highlighted.map((r) => r.metric)).size > 1) {
+      err(`${p.file}: highlighted results must share one metric, so their bars compare`);
+    }
+    for (const r of highlighted) {
+      const n = leadingNumber(r.value);
+      if (n === null || n < 0 || n > 1) {
+        err(`${p.file}: highlighted result "${r.label}" needs a value between 0 and 1`);
+      }
     }
     if (d.period.end && d.period.end < d.period.start) {
       err(`${p.file}: period.end is before period.start`);

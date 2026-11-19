@@ -1,0 +1,21 @@
+[
+  {
+    "id": "nus",
+    "institution": "National University of Singapore",
+    "credential": "BSc (Hons) Data Science and Analytics",
+    "start": "2024-08",
+    "end": "2028-05",
+    "minor": "Artificial Intelligence",
+    "gpa": "4.64/5.00",
+    "gpaAsOf": "2026-11",
+    "shortName": "NUS"
+  },
+  {
+    "id": "tsinghua",
+    "institution": "Tsinghua University",
+    "credential": "Exchange semester",
+    "start": "2026-09",
+    "end": "2027-01",
+    "note": "Computer Vision; C++"
+  }
+]

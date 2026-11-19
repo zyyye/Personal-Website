@@ -1,46 +1,47 @@
 ---
-// Home page: the five-slide deck (plan section 3). Phase 1 shell: placeholder slide bodies.
-// Phase 2 adds content, Phase 3 the design, Phase 4 the hero.
-import Base from '../layouts/Base.astro';
+// Home page: the deck, one page per project, internship and achievement (src/lib/pages.ts).
+import AboutSlide from '../components/AboutSlide.astro';
+import AchievementSlide from '../components/AchievementSlide.astro';
+import ContactSlide from '../components/ContactSlide.astro';
 import Deck from '../components/Deck.astro';
+import HeroSlide from '../components/HeroSlide.astro';
+import ProjectSlide from '../components/ProjectSlide.astro';
 import Taskbar from '../components/Taskbar.astro';
+import Base from '../layouts/Base.astro';
+import { achievements, deck, profile, visibleProjects } from '../lib/data.ts';
+
+const { pages, groups } = await deck();
+const projectById = new Map((await visibleProjects()).map((p) => [p.id, p]));
+const achievementById = new Map((await achievements()).map((a) => [a.id, a]));
+
+function must<T>(map: Map<string, T>, id: string): T {
+  const value = map.get(id);
+  if (value === undefined) throw new Error(`no content for page "${id}"`);
+  return value;
+}
+
+const firstProject =
+  groups.find((g) => g.id === 'projects') ?? groups.find((g) => g.id === 'internship');
+const workHref = `#${firstProject?.firstPageId ?? 'about'}`;
 ---
 
-<Base
-  title="Yeo Zhi Yuan: data science and AI portfolio"
-  description="Portfolio of Yeo Zhi Yuan, NUS Data Science and Analytics student."
->
+<Base title={`${profile.name}: data science and AI portfolio`} description={profile.headline}>
   <Deck>
-    <section id="hero" class="slide" data-slide aria-labelledby="hero-title">
-      <div class="window">
-        <h1 id="hero-title">Yeo Zhi Yuan</h1>
-        <p>Placeholder slide. The hero is built in Phase 4.</p>
-      </div>
-    </section>
-    <section id="about" class="slide" data-slide aria-labelledby="about-title">
-      <div class="window">
-        <h2 id="about-title">About</h2>
-        <p>Placeholder slide. Content arrives in Phase 2, design in Phase 3.</p>
-      </div>
-    </section>
-    <section id="work" class="slide" data-slide aria-labelledby="work-title">
-      <div class="window">
-        <h2 id="work-title">Work</h2>
-        <p>Placeholder slide. Content arrives in Phase 2, design in Phase 3.</p>
-      </div>
-    </section>
-    <section id="learning" class="slide" data-slide aria-labelledby="learning-title">
-      <div class="window">
-        <h2 id="learning-title">Skills and learning</h2>
-        <p>Placeholder slide. Content arrives in Phase 2, design in Phase 3.</p>
-      </div>
-    </section>
-    <section id="contact" class="slide" data-slide aria-labelledby="contact-title">
-      <div class="window">
-        <h2 id="contact-title">Contact</h2>
-        <p>Placeholder slide. Content arrives in Phase 2, design in Phase 3.</p>
-      </div>
-    </section>
+    {pages.map((page) => {
+      switch (page.group) {
+        case 'home':
+          return <HeroSlide page={page} workHref={workHref} />;
+        case 'about':
+          return <AboutSlide page={page} />;
+        case 'projects':
+        case 'internship':
+          return <ProjectSlide page={page} project={must(projectById, page.id)} />;
+        case 'achievements':
+          return <AchievementSlide page={page} entry={must(achievementById, page.id)} />;
+        case 'contact':
+          return <ContactSlide page={page} />;
+      }
+    })}
   </Deck>
-  <Taskbar />
+  <Taskbar groups={groups} />
 </Base>

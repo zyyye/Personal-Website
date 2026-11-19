@@ -1,0 +1,116 @@
+---
+// About page (plan section 8.7): "What I'm good at", "Where I'm headed", "How I got here".
+// The photo and education live on the home page's lab pass, so they are not repeated here.
+import { learningEntries, profile, resolveTargets } from '../lib/data.ts';
+import { formatAvailability, joinOr } from '../lib/format.ts';
+import type { DeckPage } from '../lib/pages.ts';
+import Slide from './Slide.astro';
+
+interface Props {
+  page: DeckPage;
+}
+const { page } = Astro.props;
+
+const target = await resolveTargets();
+const { about, targetRoles } = profile;
+const learningNow = (await learningEntries()).filter((l) => l.data.status === 'in-progress');
+---
+
+<Slide page={page} labelledby="about-title">
+  <div class="about">
+    <h2 id="about-title" class="page-title">
+      About
+    </h2>
+    <div class="about__cols">
+      <section aria-labelledby="about-good">
+        <h3 id="about-good">What I'm good at</h3>
+        <ul class="pixel-list">
+          {about.talent.map((t) => {
+            const e = target(t.evidence);
+            return (
+              <li>
+                {t.text}{' '}
+                <a class="evidence" href={e.href}>
+                  See {e.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section aria-labelledby="about-headed">
+        <h3 id="about-headed">Where I'm headed</h3>
+        <p>Aiming for {joinOr(targetRoles)} roles, in that order of preference.</p>
+        <ul class="pixel-list">
+          {profile.availability.map((a) => (
+            <li>{formatAvailability(a)}</li>
+          ))}
+        </ul>
+        {learningNow.length > 0 && (
+          <p class="now">Learning now: {learningNow.map((l) => l.data.title).join(', ')}.</p>
+        )}
+        {about.ambitionWhy && <p>{about.ambitionWhy}</p>}
+      </section>
+
+      <section aria-labelledby="about-story">
+        <h3 id="about-story">How I got here</h3>
+        <ol class="timeline">
+          {about.story.map((s) => (
+            <li>
+              <span class="timeline__when">{s.when}</span>
+              <span>{s.ref ? <a href={target(s.ref).href}>{s.text}</a> : s.text}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  </div>
+</Slide>
+
+<style>
+  .about__cols {
+    display: grid;
+    gap: var(--space-5);
+  }
+  @media (min-width: 56rem) {
+    .about__cols {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3rem;
+    }
+  }
+  h3 {
+    margin: 0 0 var(--space-3);
+    font-size: 1.125rem;
+    color: var(--color-accent);
+  }
+  p {
+    margin: 0 0 var(--space-3);
+  }
+  .now {
+    margin-top: var(--space-3);
+    color: var(--color-text-muted);
+  }
+  .evidence {
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+  .timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 5.25rem minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+  .timeline li + li {
+    margin-top: var(--space-2);
+  }
+  .timeline__when {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

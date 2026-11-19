@@ -1,0 +1,50 @@
+---
+// The mascot, rendered from its pixel grid at build time (plan section 3A). Decorative.
+import { MASCOT, MASCOT_INKS } from '../data/sprites.ts';
+import { inks, pathFor, validateGrid } from '../lib/pixels.ts';
+
+interface Props {
+  /** Rendered size in CSS px; a multiple of 16 keeps the pixels crisp. */
+  size?: number;
+}
+const { size = 32 } = Astro.props;
+const { width, height } = validateGrid(MASCOT, MASCOT_INKS);
+const layers = inks(MASCOT).map((ink) => ({ ink, d: pathFor(MASCOT, ink) }));
+---
+
+<svg
+  class="sprite"
+  viewBox={`0 0 ${width} ${height}`}
+  width={size}
+  height={size}
+  aria-hidden="true"
+  focusable="false"
+  shape-rendering="crispEdges"
+>
+  {layers.map((l) => (
+    <path class={`ink-${l.ink}`} d={l.d} />
+  ))}
+</svg>
+
+<style>
+  .sprite {
+    flex: none;
+  }
+  .ink-k,
+  .ink-s {
+    fill: var(--color-text);
+  }
+  .ink-b,
+  .ink-g {
+    fill: var(--color-accent);
+  }
+  .ink-d {
+    fill: var(--color-accent-deep);
+  }
+  .ink-w {
+    fill: var(--color-surface);
+  }
+  .ink-e {
+    fill: var(--color-accent-2);
+  }
+</style>

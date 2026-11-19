@@ -1,0 +1,81 @@
+---
+// Renders Result[] (plan section 5). Metric and n are required by the schema, so every row has them.
+import type { CollectionEntry } from 'astro:content';
+
+type Result = NonNullable<CollectionEntry<'projects'>['data']['results']>[number];
+interface Props {
+  results: Result[];
+}
+const { results } = Astro.props;
+const anySeeds = results.some((r) => r.seeds !== undefined);
+---
+
+<div class="table-scroll" role="region" aria-label="Results" tabindex="0">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Result</th>
+        <th scope="col">Metric</th>
+        <th scope="col">Value</th>
+        {anySeeds && <th scope="col">Seeds</th>}
+        <th scope="col">Evaluated on</th>
+      </tr>
+    </thead>
+    <tbody>
+      {results.map((r) => (
+        <tr>
+          <th scope="row">
+            {r.label}
+            {r.note && <span class="note">{r.note}</span>}
+          </th>
+          <td>{r.level ? `${r.metric} (${r.level})` : r.metric}</td>
+          <td class="num">{r.value}</td>
+          {anySeeds && <td class="num">{r.seeds ?? 'n/a'}</td>}
+          <td>{r.n}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<p class="table-note">± is the standard deviation across seeds.</p>
+
+<style>
+  .table-scroll {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  th,
+  td {
+    padding: var(--space-2);
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 2px solid var(--color-bg);
+  }
+  table {
+    background: var(--color-surface);
+  }
+  thead th {
+    color: var(--color-accent-2);
+    font-weight: 700;
+  }
+  tbody th {
+    font-weight: 400;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .note {
+    display: block;
+    font-size: 0.875em;
+    color: var(--color-text-muted);
+  }
+  .table-note {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+</style>

@@ -54,3 +54,37 @@ exit and failed. `--ignore-lock` keeps a one-off foreground server (comment in A
 
 Chrome requests `/favicon.ico` on every page and logged a 404 console error. A neutral `favicon.svg` is
 linked now; Phase 3 replaces it with an icon drawn from the mascot.
+
+## 2026-11-19: Phase 2 content choices
+
+- DeepWeeds period Jan to Apr 2026 (Leo, 19 Nov 2026). The follow-up investigation stays undated on the page.
+- Hero line uses the draft "Data science and AI student at NUS. I build ML systems and find out why they fail." (Leo accepted it as a placeholder; easy to change in `src/data/profile.json`).
+- GPA 4.64/5.00 shown "as of Nov 2026": Leo confirmed on 19 Nov 2026 that it is current. Update `gpa` and `gpaAsOf` together in `src/data/education.json` when results change.
+- The internship is listed as "Singapore public-sector agency", without the employer's name, until Leo confirms what may be published (plan section 10, open item 1).
+- The Fitness and Drill Instructor role (SPF, Jan 2022 to Nov 2023) is shown: Leo confirmed on 19 Nov 2026 that the SPF name may appear. Per plan section 10, open item 12, it is the first timeline row on the About slide and the IBM row moved off the timeline (the certificate is still on the Skills slide). The acronym is kept as written on the CV.
+- No stub files for UN Voting, Airline Tweets, POLLUX or the Hugging Face capstone yet: the schema requires facts (period, role, kind) the sources do not give. The plan's section 8.4 remains the backlog.
+
+## 2026-11-19: The deck is off on phones with the current content
+
+The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phones, so the safety valve turns the deck off and phones scroll normally; desktop and laptop screens snap slide by slide. Decided by Leo (19 Nov 2026): accept it. Phones scroll normally; the About slide stays one slide.
+
+## 2026-11-19: Contrast is a test, not a claim
+
+`src/lib/contrast.ts` computes WCAG contrast ratios; `tests/unit/contrast.test.ts` fails if any text pair in `tokens.css` drops below 4.5:1 or the focus colour below 3:1 (WCAG 2.x SC 1.4.3 and 1.4.11 thresholds).
+
+## 2026-11-19: Phase 3 design system (palette A chosen by Leo)
+
+- Palette A, "Night Shift". Roles: amber for anything clickable, cyan for structure (window title bars, section headings). Dark text on cyan and amber is also contrast-tested.
+- Type: Silkscreen (pixel face) for the name, window titles, project names and buttons only; Atkinson Hyperlegible Next for everything else, including section headings and the email address, because Silkscreen draws every letter as a capital. Both self-hosted from `@fontsource` (SIL Open Font License 1.1), Latin subset only.
+- Windows: a cyan title bar carrying the section's real heading, notched pixel corners and a hard offset shadow, drawn with `box-shadow` (no images). The name in the hero is the one bold element, with a two-step block shadow.
+- The desk's dot grid is static and never sits behind body text.
+
+## 2026-11-19: Redesign from the design lab (decided by Leo)
+
+- Theme "Black and mint"; ID-card home page; taskbar design 2, "pixel keys"; Sprout-bot mascot in the taskbar; the name's block shadow steps in a loop. Leo did not answer the defaults question, so the lab's defaults were kept for mascot, name motion, transition, accent and label style; each is a one-line change.
+- **Navigation:** one page per project, internship and achievement. Scrolling, swiping and keys move one page; the taskbar jumps to a group's first page or one page up or down (Leo: "both scroll and click"). The order comes from one pure function, `src/lib/pages.ts`, read by the pages, the taskbar and the script. This replaces the plan's five fixed slides and its cap of seven: the deck grows by one page per item.
+- **Achievements** are learning entries of kind certificate or course; exchange courses stay on the About page. An achievement page shows only real content (no placeholder is ever published): Leo adds `summary` and `credentialUrl`.
+- **Charts:** a project's bar chart is its results marked `highlight: true`; the content check requires one shared metric on a 0 to 1 scale and at most six bars.
+- **Position in a group** ("Achievements 2 of 3") is rendered on the page at build time rather than in the taskbar: always correct, no JavaScript, and it keeps the taskbar within 360 px.
+- **Motion exception to plan section 3A, rule 5 (no loops by default):** Leo chose a moving name. It runs only while the script shows a Pause motion button (WCAG 2.2.2), never without JavaScript or with reduced motion, and only at 64rem and wider.
+- **Narrow screens:** taskbar keys show icons only below 56rem (names kept for assistive technology); the mascot is hidden below 30rem.

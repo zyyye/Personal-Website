@@ -1,21 +1,35 @@
 /*
- * Design tokens. PLACEHOLDER neutral palette for Phase 1 only.
- * Phase 3 replaces these values with the palette Leo picks (plan section 3A).
- * Every colour on the site must come from a variable in this file.
+ * Design tokens: "Black and mint" (chosen by Leo, 19 Nov 2026, from the design lab).
+ * Every colour on the site comes from a variable here. tests/unit/contrast.test.ts checks the
+ * text and focus pairs against WCAG thresholds.
  */
 :root {
   color-scheme: dark;
 
-  --color-bg: #121418;
-  --color-surface: #1b1e24;
-  --color-border: #3a3f48;
-  --color-text: #e8eaed;
-  --color-text-muted: #b4bac3;
-  --color-accent: #8cc0ff;
-  --color-focus: #ffd166;
+  /* Palette */
+  --color-bg: #000000; /* black: the desk */
+  --color-surface: #121212; /* panels, cards, the taskbar */
+  --color-border: #3d3d3d; /* frames and key edges */
+  --color-text: #f7f7f7;
+  --color-text-muted: #c2c2c2;
+  --color-accent: #b8f5d0; /* mint: anything you can click, and the current page */
+  --color-accent-2: #ffffff; /* white: structure (labels, the badge clip, the photo frame) */
+  --color-focus: #b8f5d0;
+  --color-success: #7fe0a0;
+  --color-warning: #ffd36b;
 
-  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-body); /* Phase 3: self-hosted pixel face for short display text */
+  /* Derived, decorative only (never used for text) */
+  --color-shadow: #262626; /* hard pixel shadow */
+  --color-accent-deep: #536e5e; /* mint at 45% on black: the name's block shadow */
+  --color-key: #1c1c1c; /* a taskbar key's face */
+  --color-grid: #1a1a1a; /* desk dot grid */
+
+  /* Type: a pixel face for short display text only; a legible face for everything else. */
+  --font-display: 'Silkscreen', ui-monospace, monospace;
+  --font-body: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+
+  /* Pixel unit: frames, notches and shadows are multiples of it. */
+  --px: 4px;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -23,6 +37,6 @@
   --space-4: 1.5rem;
   --space-5: 2.5rem;
 
-  --taskbar-h: 3.25rem;
-  --radius: 0.25rem;
+  --taskbar-h: 4.5rem; /* a 44px key, its 4px edge and padding */
+  --radius: 0;
 }

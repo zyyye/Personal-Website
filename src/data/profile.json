@@ -1,0 +1,71 @@
+{
+  "name": "Yeo Zhi Yuan",
+  "greeting": "Hi, I'm",
+  "headline": "Data science and AI student at NUS. I build ML systems and find out why they fail.",
+  "location": "Singapore. On exchange at Tsinghua University, Beijing, until Jan 2027.",
+  "email": "yeozy2018@gmail.com",
+  "linkedin": "https://www.linkedin.com/in/yeo-zhi-yuan",
+  "github": null,
+  "cv": {
+    "path": "/cv.pdf",
+    "ready": false
+  },
+  "photo": {
+    "src": "/images/portrait.jpg",
+    "alt": "Portrait of Yeo Zhi Yuan"
+  },
+  "targetRoles": ["AI engineer", "data scientist", "data analyst"],
+  "availability": [
+    {
+      "label": "3-month internship",
+      "start": "2027-05",
+      "end": "2027-07",
+      "months": 3
+    },
+    {
+      "label": "Semester-long internship",
+      "start": "2027-08",
+      "end": "2027-12",
+      "months": 6
+    }
+  ],
+  "about": {
+    "talent": [
+      {
+        "text": "I find out why a model fails and fix the cause, not the symptom.",
+        "evidence": "deepweeds"
+      },
+      {
+        "text": "I build whole pipelines: data generation, training and inference.",
+        "evidence": "logiclens"
+      },
+      {
+        "text": "I test claims with baselines, repeated seeds and confidence intervals.",
+        "evidence": "deepweeds"
+      }
+    ],
+    "story": [
+      {
+        "when": "Jan 2022",
+        "text": "Fitness and Drill Instructor, SPF"
+      },
+      {
+        "when": "Nov 2023",
+        "text": "Started private tutoring (ongoing)"
+      },
+      {
+        "when": "Aug 2024",
+        "text": "Began BSc Data Science and Analytics at NUS"
+      },
+      {
+        "when": "May 2026",
+        "text": "AI research intern: fine-tuned a 7B language model",
+        "ref": "logiclens"
+      },
+      {
+        "when": "Sep 2026",
+        "text": "Exchange at Tsinghua University (computer vision)"
+      }
+    ]
+  }
+}

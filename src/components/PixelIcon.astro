@@ -1,0 +1,31 @@
+---
+// An 8 by 8 one-ink pixel icon, drawn in the current text colour. Decorative: the control that
+// holds it carries the accessible name.
+import { pathFor, validateGrid, type PixelGrid } from '../lib/pixels.ts';
+
+interface Props {
+  grid: PixelGrid;
+  /** Rendered size in CSS px; a multiple of 8 keeps the pixels crisp. */
+  size?: number;
+}
+const { grid, size = 16 } = Astro.props;
+const { width, height } = validateGrid(grid, '#');
+---
+
+<svg
+  class="pixel-icon"
+  viewBox={`0 0 ${width} ${height}`}
+  width={size}
+  height={size}
+  aria-hidden="true"
+  focusable="false"
+  shape-rendering="crispEdges"
+>
+  <path d={pathFor(grid, '#')} fill="currentColor"></path>
+</svg>
+
+<style>
+  .pixel-icon {
+    flex: none;
+  }
+</style>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ai-research-intern",
+    "title": "AI Research Project Intern",
+    "organisation": "Singapore public-sector agency",
+    "start": "2026-05",
+    "end": "2026-08",
+    "summary": "Through the NUS Undergraduate Professional Internship Programme. Built LogicLens.",
+    "showOnSite": true
+  },
+  {
+    "id": "private-tutor",
+    "title": "Private tutor",
+    "organisation": "Mindworks Tuition",
+    "start": "2023-11",
+    "showOnSite": true
+  },
+  {
+    "id": "fitness-drill-instructor",
+    "title": "Fitness and Drill Instructor",
+    "organisation": "SPF",
+    "start": "2022-01",
+    "end": "2023-11",
+    "showOnSite": true
+  }
+]

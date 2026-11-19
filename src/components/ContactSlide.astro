@@ -1,0 +1,63 @@
+---
+// Last page. GitHub and the CV appear only when ready (plan section 3, "Links and photo").
+import { profile } from '../lib/data.ts';
+import type { DeckPage } from '../lib/pages.ts';
+import Slide from './Slide.astro';
+
+interface Props {
+  page: DeckPage;
+}
+const { page } = Astro.props;
+---
+
+<Slide page={page} labelledby="contact-title">
+  <div class="contact">
+    <h2 id="contact-title" class="page-title">
+      Contact
+    </h2>
+    <p class="contact__lead">The quickest way to reach me is email.</p>
+    <p class="contact__email">
+      <a href={`mailto:${profile.email}`}>{profile.email}</a>
+    </p>
+    <ul class="contact__links pixel-list">
+      <li>
+        <a href={profile.linkedin} rel="me">
+          LinkedIn
+        </a>
+      </li>
+      {profile.github && (
+        <li>
+          <a href={profile.github} rel="me">
+            GitHub
+          </a>
+        </li>
+      )}
+      {profile.cv.ready && (
+        <li>
+          <a href={profile.cv.path}>CV (PDF)</a>
+        </li>
+      )}
+    </ul>
+    <p class="contact__where">{profile.location}</p>
+  </div>
+</Slide>
+
+<style>
+  .contact__lead {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .contact__email {
+    margin: 0 0 var(--space-5);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 5vw, 2.5rem);
+    overflow-wrap: anywhere;
+  }
+  .contact__links {
+    margin-bottom: var(--space-5);
+  }
+  .contact__where {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+</style>

@@ -103,6 +103,34 @@ describe('section 7 rules', () => {
   });
 });
 
+describe('highlighted results (the bar chart)', () => {
+  it('a highlighted result on the shared metric passes', () => {
+    const root = copyFixture();
+    editFile(root, PROJECT, 'n: 100 test items }', 'n: 100 test items, highlight: true }');
+    expect(problems(root)).toEqual([]);
+  });
+  it('a highlighted value outside 0 to 1 fails', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      PROJECT,
+      "value: '0.90', metric: test accuracy, n: 100 test items }",
+      "value: '90%', metric: test accuracy, n: 100 test items, highlight: true }",
+    );
+    expect(problems(root).some((p) => /needs a value between 0 and 1/.test(p))).toBe(true);
+  });
+  it('highlighted results on different metrics fail', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      PROJECT,
+      "  - { label: Example accuracy, value: '0.90', metric: test accuracy, n: 100 test items }",
+      "  - { label: Example accuracy, value: '0.90', metric: test accuracy, n: 100 test items, highlight: true }\n  - { label: Example F1, value: '0.80', metric: test macro-F1, n: 100 test items, highlight: true }",
+    );
+    expect(problems(root).some((p) => /share one metric/.test(p))).toBe(true);
+  });
+});
+
 describe('replay integrity', () => {
   it('a changed character in rawText fails (hash and join)', () => {
     const root = copyFixture();
