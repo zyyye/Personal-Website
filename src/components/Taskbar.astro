@@ -1,25 +1,52 @@
 ---
-// Bottom taskbar (plan sections 3 and 3B): direct jumps to each slide, plus the manual
-// "Deck / Plain scroll" switch. Links are real anchors, so they work without JavaScript.
+// Bottom taskbar (plan sections 3 and 3B).
+// - 'deck' (home page): direct jumps to each slide, plus the manual "Deck / Plain scroll" switch.
+// - 'page' (project pages): simple top-level navigation, with the CV only when it is ready.
+// Links are real anchors, so they work without JavaScript.
+import { profile } from '../lib/data.ts';
 import { SLIDES } from '../lib/slides.ts';
+
+interface Props {
+  variant?: 'deck' | 'page';
+  /** For 'page': the href of the current page, marked with aria-current. */
+  current?: string;
+}
+const { variant = 'deck', current } = Astro.props;
+
+const pageLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/#work', label: 'Work' },
+  { href: '/projects/', label: 'Projects' },
+  ...(profile.cv.ready ? [{ href: profile.cv.path, label: 'CV' }] : []),
+];
 ---
 
-<nav class="taskbar" aria-label="Slides">
+<nav class="taskbar" aria-label={variant === 'deck' ? 'Slides' : 'Site'}>
   <ul class="taskbar__links">
-    {SLIDES.map((s) => (
-      <li>
-        <a href={`#${s.id}`} data-slide-link>
-          {s.label}
-        </a>
-      </li>
-    ))}
+    {variant === 'deck'
+      ? SLIDES.map((s) => (
+          <li>
+            <a href={`#${s.id}`} data-slide-link>
+              {s.label}
+            </a>
+          </li>
+        ))
+      : pageLinks.map((l) => (
+          <li>
+            <a href={l.href} aria-current={l.href === current ? 'page' : undefined}>
+              {l.label}
+            </a>
+          </li>
+        ))}
   </ul>
-  <button type="button" class="taskbar__mode" data-mode-toggle aria-pressed="false">
-    Deck{' '}
-    <span class="taskbar__state" data-mode-state aria-hidden="true">
-      Off
-    </span>
-  </button>
+  {variant === 'deck' && (
+    <button type="button" class="taskbar__mode" data-mode-toggle aria-pressed="false">
+      Deck{' '}
+      <span class="taskbar__state" data-mode-state aria-hidden="true">
+        Off
+      </span>
+    </button>
+  )}
 </nav>
 
 <style>
@@ -57,7 +84,8 @@ import { SLIDES } from '../lib/slides.ts';
     white-space: nowrap;
   }
 
-  .taskbar__links a[aria-current='true'] {
+  .taskbar__links a[aria-current='true'],
+  .taskbar__links a[aria-current='page'] {
     background: var(--color-bg);
     box-shadow: inset 0 -3px 0 var(--color-accent);
   }

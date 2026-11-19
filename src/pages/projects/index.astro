@@ -1,0 +1,27 @@
+---
+import ProjectCard from '../../components/ProjectCard.astro';
+import Page from '../../layouts/Page.astro';
+import { profile, visibleProjects } from '../../lib/data.ts';
+
+const projects = await visibleProjects();
+---
+
+<Page
+  title={`Projects: ${profile.name}`}
+  description={`Projects by ${profile.name}.`}
+  current="/projects/"
+>
+  <h1>Projects</h1>
+  <div class="list">
+    {projects.map((p) => (
+      <ProjectCard project={p} headingLevel="h2" />
+    ))}
+  </div>
+</Page>
+
+<style>
+  .list {
+    display: grid;
+    gap: var(--space-3);
+  }
+</style>

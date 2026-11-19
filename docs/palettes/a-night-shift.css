@@ -1,0 +1,13 @@
+/* Proposal A, "Night Shift": deep navy lab, amber primary, cyan secondary. */
+:root {
+  --color-bg: #0e1322;
+  --color-surface: #182038;
+  --color-border: #3a4670;
+  --color-text: #eef1fa;
+  --color-text-muted: #aab4d0;
+  --color-accent: #ffb547;
+  --color-accent-2: #5fd8e8;
+  --color-focus: #ffe066;
+  --color-success: #7fe0a0;
+  --color-warning: #ffd36b;
+}

@@ -1,0 +1,111 @@
+---
+// Case-study page (plan section 6): summary and status, role, the narrative, results,
+// limitations (always shown), then next steps.
+import { render } from 'astro:content';
+import ResultsTable from '../../components/ResultsTable.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import Page from '../../layouts/Page.astro';
+import { profile, visibleProjects } from '../../lib/data.ts';
+import { formatRange, KIND_LABEL } from '../../lib/format.ts';
+
+export async function getStaticPaths() {
+  const projects = await visibleProjects();
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+const resultsWithheld = !d.results && d.status === 'being-improved';
+---
+
+<Page title={`${d.title}: ${profile.name}`} description={d.summary}>
+  <p class="crumb">
+    <a href="/projects/">All projects</a>
+  </p>
+  <h1>{d.title}</h1>
+  <p class="meta">
+    <StatusBadge status={d.status} />
+    <span>
+      {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
+    </span>
+  </p>
+  <p class="summary">{d.summary}</p>
+
+  <h2>My role</h2>
+  <p>{d.role}</p>
+
+  <Content />
+
+  {d.results && (
+    <>
+      <h2>Results</h2>
+      <ResultsTable results={d.results} />
+    </>
+  )}
+  {resultsWithheld && (
+    <section class="withheld" aria-labelledby="withheld-title">
+      <h2 id="withheld-title">Results withheld while the evaluation is redone</h2>
+      {d.nextSteps && (
+        <>
+          <p>The next version adds:</p>
+          <ol>
+            {d.nextSteps.map((s) => (
+              <li>{s}</li>
+            ))}
+          </ol>
+        </>
+      )}
+    </section>
+  )}
+
+  <h2>Limitations</h2>
+  <ul>
+    {d.limitations.map((l) => (
+      <li>{l}</li>
+    ))}
+  </ul>
+
+  {d.nextSteps && !resultsWithheld && (
+    <>
+      <h2>Next steps</h2>
+      <ul>
+        {d.nextSteps.map((s) => (
+          <li>{s}</li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  <p class="stack">
+    <strong>Stack:</strong> {d.stack.join(', ')}
+  </p>
+</Page>
+
+<style>
+  .crumb {
+    margin: 0;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .summary {
+    font-size: 1.125rem;
+  }
+  .withheld {
+    margin-top: var(--space-5);
+    padding: var(--space-3);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius);
+  }
+  .withheld h2 {
+    margin-top: 0;
+  }
+  .stack {
+    margin-top: var(--space-5);
+    color: var(--color-text-muted);
+  }
+</style>

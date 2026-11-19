@@ -1,0 +1,13 @@
+/* Proposal B, "Retro Console": warm plum-charcoal, coral primary, mint secondary, cream text. */
+:root {
+  --color-bg: #1a1620;
+  --color-surface: #251f2c;
+  --color-border: #554a63;
+  --color-text: #f6efe4;
+  --color-text-muted: #c8bccd;
+  --color-accent: #ff9478;
+  --color-accent-2: #86e3c8;
+  --color-focus: #ffe08a;
+  --color-success: #a3e48a;
+  --color-warning: #ffd166;
+}

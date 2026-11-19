@@ -1,0 +1,18 @@
+---
+// One component for every place the availability appears (hero and About), so they never differ.
+import { profile } from '../lib/data.ts';
+import { formatAvailability } from '../lib/format.ts';
+---
+
+<ul class="availability">
+  {profile.availability.map((a) => (
+    <li>{formatAvailability(a)}</li>
+  ))}
+</ul>
+
+<style>
+  .availability {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+</style>

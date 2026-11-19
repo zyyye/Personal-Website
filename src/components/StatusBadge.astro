@@ -1,0 +1,31 @@
+---
+import { STATUS_LABEL } from '../lib/format.ts';
+
+interface Props {
+  status: keyof typeof STATUS_LABEL;
+}
+const { status } = Astro.props;
+---
+
+<span class="status" data-status={status}>
+  {STATUS_LABEL[status]}
+</span>
+
+<style>
+  .status {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    font-size: 0.875em;
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  .status[data-status='complete'] {
+    color: var(--color-success);
+  }
+  .status[data-status='being-improved'],
+  .status[data-status='in-progress'] {
+    color: var(--color-warning);
+  }
+</style>

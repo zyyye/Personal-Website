@@ -1,0 +1,49 @@
+---
+// Layout for normal-scrolling pages (project list and case studies).
+import Taskbar from '../components/Taskbar.astro';
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  current?: string;
+}
+const { title, description, current } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <main class="page">
+    <slot />
+  </main>
+  <Taskbar variant="page" current={current} />
+</Base>
+
+<style>
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-3) calc(var(--taskbar-h) + var(--space-5));
+  }
+  .page :global(h1) {
+    font-family: var(--font-display);
+    line-height: 1.2;
+  }
+  .page :global(h2) {
+    margin-top: var(--space-5);
+    font-family: var(--font-display);
+  }
+  .page :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .page :global(th),
+  .page :global(td) {
+    padding: var(--space-2);
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .page :global(li + li) {
+    margin-top: var(--space-1);
+  }
+</style>

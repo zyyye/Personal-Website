@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatRange, KIND_LABEL, shortTitle } from '../lib/format.ts';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  headingLevel?: 'h3' | 'h2';
+}
+const { project, headingLevel = 'h3' } = Astro.props;
+const d = project.data;
+const Heading = headingLevel;
+---
+
+<article class="card">
+  <Heading class="card__title">
+    <a href={`/projects/${project.id}/`}>{shortTitle(d.title)}</a>
+  </Heading>
+  <p class="card__meta">
+    <StatusBadge status={d.status} />
+    <span>
+      {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
+    </span>
+  </p>
+  <p class="card__summary">{d.summary}</p>
+</article>
+
+<style>
+  .card {
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .card__title {
+    margin: 0 0 var(--space-2);
+    font-size: 1.15rem;
+    font-family: var(--font-display);
+  }
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+  .card__summary {
+    margin: 0;
+  }
+</style>

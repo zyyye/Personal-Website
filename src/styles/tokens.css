@@ -12,7 +12,10 @@
   --color-text: #e8eaed;
   --color-text-muted: #b4bac3;
   --color-accent: #8cc0ff;
+  --color-accent-2: #9fd8cf;
   --color-focus: #ffd166;
+  --color-success: #7ddc9a;
+  --color-warning: #f2c66d;
 
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: var(--font-body); /* Phase 3: self-hosted pixel face for short display text */
