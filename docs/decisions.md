@@ -59,14 +59,14 @@ linked now; Phase 3 replaces it with an icon drawn from the mascot.
 
 - DeepWeeds period Jan to Apr 2026 (Leo, 19 Nov 2026). The follow-up investigation stays undated on the page.
 - Hero line uses the draft "Data science and AI student at NUS. I build ML systems and find out why they fail." (Leo accepted it as a placeholder; easy to change in `src/data/profile.json`).
-- GPA 4.64/5.00 shown "as of Dec 2025": the CV lists it and has nothing dated later. **Leo to confirm** the current figure and month.
+- GPA 4.64/5.00 shown "as of Nov 2026": Leo confirmed on 19 Nov 2026 that it is current. Update `gpa` and `gpaAsOf` together in `src/data/education.json` when results change.
 - The internship is listed as "Singapore public-sector agency", without the employer's name, until Leo confirms what may be published (plan section 10, open item 1).
 - The Fitness and Drill Instructor role (SPF, Jan 2022 to Nov 2023) is shown: Leo confirmed on 19 Nov 2026 that the SPF name may appear. Per plan section 10, open item 12, it is the first timeline row on the About slide and the IBM row moved off the timeline (the certificate is still on the Skills slide). The acronym is kept as written on the CV.
 - No stub files for UN Voting, Airline Tweets, POLLUX or the Hugging Face capstone yet: the schema requires facts (period, role, kind) the sources do not give. The plan's section 8.4 remains the backlog.
 
 ## 2026-11-19: The deck is off on phones with the current content
 
-The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phones, so the safety valve turns the deck off and phones scroll normally; desktop and laptop screens snap slide by slide. Options for Leo in Phase 3: accept it, or split About into two slides (the plan allows up to seven).
+The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phones, so the safety valve turns the deck off and phones scroll normally; desktop and laptop screens snap slide by slide. Decided by Leo (19 Nov 2026): accept it. Phones scroll normally; the About slide stays one slide.
 
 ## 2026-11-19: Contrast is a test, not a claim
 
