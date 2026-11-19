@@ -1,0 +1,66 @@
+---
+// One achievement page in the deck (a certificate or a course). It shows only what the content
+// holds: no placeholder text is ever published. Leo adds `summary` and `credentialUrl` per entry.
+import type { CollectionEntry } from 'astro:content';
+import { formatMonth } from '../lib/format.ts';
+import type { DeckPage } from '../lib/pages.ts';
+import Slide from './Slide.astro';
+
+interface Props {
+  page: DeckPage;
+  entry: CollectionEntry<'learning'>;
+}
+const { page, entry } = Astro.props;
+const d = entry.data;
+const titleId = `${entry.id}-title`;
+const kind = d.kind === 'certificate' ? 'Certificate' : 'Course';
+const when =
+  d.status === 'in-progress' ? 'in progress' : d.date ? formatMonth(d.date) : 'completed';
+---
+
+<Slide page={page} labelledby={titleId}>
+  <div class="achievement">
+    <h2 id={titleId} class="page-title">
+      {d.title}
+    </h2>
+    <p class="achievement__meta">
+      {kind}, {d.provider}, {when}
+    </p>
+    {d.summary && <p class="achievement__summary">{d.summary}</p>}
+    {(d.credentialUrl || d.relatedProject) && (
+      <p class="achievement__links">
+        {d.credentialUrl && (
+          <a class="pixel-button" href={d.credentialUrl}>
+            View the credential
+          </a>
+        )}
+        {d.relatedProject && (
+          <a class="pixel-button pixel-button--quiet" href={`#${d.relatedProject}`}>
+            See the project
+          </a>
+        )}
+      </p>
+    )}
+  </div>
+</Slide>
+
+<style>
+  .achievement {
+    max-width: 52rem;
+  }
+  .achievement__meta {
+    margin: 0 0 var(--space-4);
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+  }
+  .achievement__summary {
+    margin: 0 0 var(--space-4);
+    font-size: 1.1875rem;
+  }
+  .achievement__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-4) 0 0;
+  }
+</style>

@@ -1,51 +1,71 @@
 ---
-// Bottom taskbar (plan sections 3 and 3B).
-// - 'deck' (home page): direct jumps to each slide, plus the manual "Deck / Plain scroll" switch.
+// Bottom taskbar, "pixel keys" design (chosen by Leo from the design lab, 19 Nov 2026).
+// - 'deck' (home page): one key per group, jumping to the group's first page; keys for the page
+//   above and below; the manual "Deck" switch (plan section 3B, rule 4).
 // - 'page' (project pages): simple top-level navigation, with the CV only when it is ready.
-// Links are real anchors, so they work without JavaScript.
+// Links are real anchors, so navigation works without JavaScript; the step keys and the Deck
+// switch need the script and are hidden without it.
+import { CONTROL_ICONS, GROUP_ICONS } from '../data/sprites.ts';
 import { profile } from '../lib/data.ts';
-import { SLIDES } from '../lib/slides.ts';
+import type { DeckGroup } from '../lib/pages.ts';
+import PixelIcon from './PixelIcon.astro';
+import Sprite from './Sprite.astro';
 
 interface Props {
   variant?: 'deck' | 'page';
+  /** For 'deck': one key per group. */
+  groups?: DeckGroup[];
   /** For 'page': the href of the current page, marked with aria-current. */
   current?: string;
 }
-const { variant = 'deck', current } = Astro.props;
+const { variant = 'deck', groups = [], current } = Astro.props;
 
 const pageLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/#work', label: 'Work' },
-  { href: '/projects/', label: 'Projects' },
-  ...(profile.cv.ready ? [{ href: profile.cv.path, label: 'CV' }] : []),
+  { href: '/', label: 'Home', icon: GROUP_ICONS.home },
+  { href: '/projects/', label: 'Projects', icon: GROUP_ICONS.projects },
+  ...(profile.cv.ready ? [{ href: profile.cv.path, label: 'CV', icon: GROUP_ICONS.about }] : []),
 ];
 ---
 
-<nav class="taskbar" aria-label={variant === 'deck' ? 'Slides' : 'Site'}>
-  <ul class="taskbar__links">
+<nav class="taskbar" aria-label={variant === 'deck' ? 'Pages' : 'Site'}>
+  <span class="taskbar__mascot">
+    <Sprite size={32} />
+  </span>
+  <ul class="taskbar__keys">
     {variant === 'deck'
-      ? SLIDES.map((s) => (
+      ? groups.map((g) => (
           <li>
-            <a href={`#${s.id}`} data-slide-link>
-              {s.label}
+            <a class="key" href={`#${g.firstPageId}`} data-slide-link data-group-link={g.id}>
+              <PixelIcon grid={GROUP_ICONS[g.id]} />
+              <span class="key__label">{g.label}</span>
             </a>
           </li>
         ))
       : pageLinks.map((l) => (
           <li>
-            <a href={l.href} aria-current={l.href === current ? 'page' : undefined}>
-              {l.label}
+            <a class="key" href={l.href} aria-current={l.href === current ? 'page' : undefined}>
+              <PixelIcon grid={l.icon} />
+              <span class="key__label">{l.label}</span>
             </a>
           </li>
         ))}
   </ul>
   {variant === 'deck' && (
-    <button type="button" class="taskbar__mode" data-mode-toggle aria-pressed="false">
-      Deck{' '}
-      <span class="taskbar__state" data-mode-state aria-hidden="true">
-        Off
-      </span>
-    </button>
+    <div class="taskbar__controls" data-needs-script>
+      <button type="button" class="key" data-step="-1" aria-label="Previous page">
+        <PixelIcon grid={CONTROL_ICONS.up} />
+      </button>
+      <button type="button" class="key" data-step="1" aria-label="Next page">
+        <PixelIcon grid={CONTROL_ICONS.down} />
+      </button>
+      <button type="button" class="key key--mode" data-mode-toggle aria-pressed="false">
+        <PixelIcon grid={CONTROL_ICONS.slides} />
+        <span class="key__label">Deck</span>
+        <span class="key__state" data-mode-state aria-hidden="true">
+          Off
+        </span>
+      </button>
+    </div>
   )}
 </nav>
 
@@ -58,69 +78,102 @@ const pageLinks = [
     align-items: center;
     gap: var(--space-2);
     min-height: var(--taskbar-h);
-    padding: var(--space-1) var(--space-2) calc(var(--space-1) + env(safe-area-inset-bottom, 0px));
+    padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
     background: var(--color-surface);
     box-shadow: 0 calc(-1 * var(--px)) 0 0 var(--color-border);
-    /* Fluid sizes so all five links and the switch fit a 360px screen (plan section 3B, rule 2). */
-    font-size: clamp(0.8125rem, 3.4vw, 1rem);
   }
-
-  .taskbar__links {
+  .taskbar__mascot {
     display: flex;
-    flex: 1;
-    gap: 0;
+    padding: var(--px);
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 2px var(--color-border);
+  }
+  .taskbar__keys,
+  .taskbar__controls {
+    display: flex;
+    gap: var(--space-1);
     margin: 0;
     padding: 0;
     list-style: none;
-    overflow-x: auto;
+  }
+  .taskbar__keys {
+    flex: 1;
+    min-width: 0;
   }
 
-  .taskbar__links a {
-    display: block;
-    padding: var(--space-2) clamp(0.3rem, 1.4vw, 0.75rem);
+  /* A key: raised by a 4px edge; the current page's key is pressed in (plan section 3A). */
+  .key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-width: 2.25rem;
+    min-height: 2.75rem;
+    margin-bottom: var(--px);
+    padding: 0 clamp(0rem, 1.1vw, 0.875rem);
+    font: inherit;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    line-height: 1;
     color: var(--color-text);
-    font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-  }
-
-  .taskbar__links a:hover {
-    color: var(--color-accent);
-  }
-
-  .taskbar__links a[aria-current='true'],
-  .taskbar__links a[aria-current='page'] {
-    color: var(--color-accent);
-    box-shadow: inset 0 calc(-1 * var(--px)) 0 0 var(--color-accent);
-  }
-
-  .taskbar__mode {
-    flex: none;
-    padding: var(--space-2) clamp(0.4rem, 1.4vw, 0.75rem);
-    font: inherit;
-    font-weight: 700;
-    color: var(--color-text);
-    background: var(--color-bg);
+    background: var(--color-key);
     border: 0;
-    box-shadow: inset 0 0 0 2px var(--color-border);
+    box-shadow:
+      inset 0 0 0 2px var(--color-border),
+      0 var(--px) 0 0 var(--color-border);
     cursor: pointer;
   }
-
-  .taskbar__mode[aria-pressed='true'] .taskbar__state {
+  .key:hover {
+    color: var(--color-accent);
+  }
+  .key:active,
+  .key[aria-current] {
+    transform: translateY(var(--px));
+    box-shadow: inset 0 0 0 2px var(--color-border);
+  }
+  .key[aria-current] {
+    color: var(--color-accent);
+    box-shadow: inset 0 0 0 3px var(--color-accent);
+  }
+  .key:disabled,
+  .key[aria-disabled='true'] {
+    color: #6b6b6b;
+    cursor: not-allowed;
+  }
+  .key__state {
+    color: var(--color-text-muted);
+  }
+  .key--mode[aria-pressed='true'] .key__state {
     color: var(--color-accent);
   }
 
-  .taskbar__mode[aria-disabled='true'] {
-    cursor: not-allowed;
-    color: var(--color-text-muted);
+  /* Narrow screens: icons only (names stay for assistive technology), then no mascot. */
+  @media (max-width: 56rem) {
+    .key__label,
+    .key__state {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 30rem) {
+    .taskbar,
+    .taskbar__keys,
+    .taskbar__controls {
+      gap: 2px;
+    }
+    .taskbar__mascot {
+      display: none;
+    }
   }
 
-  .taskbar__state {
-    color: var(--color-text-muted);
-  }
-
-  /* Without JavaScript the switch does nothing, so hide it. */
-  :global(html:not([data-scroll])) .taskbar__mode {
+  /* Without JavaScript the step keys and the Deck switch do nothing, so hide them. */
+  :global(html:not([data-scroll])) [data-needs-script] {
     display: none;
   }
 </style>

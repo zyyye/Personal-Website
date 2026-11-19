@@ -1,11 +1,20 @@
 ---
-// Slide 5. GitHub and the CV appear only when ready (plan section 3, "Links and photo").
+// Last page. GitHub and the CV appear only when ready (plan section 3, "Links and photo").
 import { profile } from '../lib/data.ts';
-import Window from './Window.astro';
+import type { DeckPage } from '../lib/pages.ts';
+import Slide from './Slide.astro';
+
+interface Props {
+  page: DeckPage;
+}
+const { page } = Astro.props;
 ---
 
-<section id="contact" class="slide" data-slide aria-labelledby="contact-title">
-  <Window title="Contact" heading={{ level: 2, id: 'contact-title' }} class="contact">
+<Slide page={page} labelledby="contact-title">
+  <div class="contact">
+    <h2 id="contact-title" class="page-title">
+      Contact
+    </h2>
     <p class="contact__lead">The quickest way to reach me is email.</p>
     <p class="contact__email">
       <a href={`mailto:${profile.email}`}>{profile.email}</a>
@@ -30,13 +39,10 @@ import Window from './Window.astro';
       )}
     </ul>
     <p class="contact__where">{profile.location}</p>
-  </Window>
-</section>
+  </div>
+</Slide>
 
 <style>
-  .contact {
-    width: min(100%, 44rem);
-  }
   .contact__lead {
     margin: 0 0 var(--space-2);
     color: var(--color-text-muted);
@@ -44,7 +50,7 @@ import Window from './Window.astro';
   .contact__email {
     margin: 0 0 var(--space-5);
     font-weight: 700;
-    font-size: clamp(1.25rem, 5vw, 2.25rem);
+    font-size: clamp(1.25rem, 5vw, 2.5rem);
     overflow-wrap: anywhere;
   }
   .contact__links {
@@ -52,7 +58,6 @@ import Window from './Window.astro';
   }
   .contact__where {
     margin: 0;
-    font-size: 0.9375rem;
     color: var(--color-text-muted);
   }
 </style>

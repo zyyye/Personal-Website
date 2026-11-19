@@ -1,23 +1,47 @@
 ---
-// Home page: the five-slide deck (plan section 3).
+// Home page: the deck, one page per project, internship and achievement (src/lib/pages.ts).
 import AboutSlide from '../components/AboutSlide.astro';
+import AchievementSlide from '../components/AchievementSlide.astro';
 import ContactSlide from '../components/ContactSlide.astro';
 import Deck from '../components/Deck.astro';
 import HeroSlide from '../components/HeroSlide.astro';
-import LearningSlide from '../components/LearningSlide.astro';
+import ProjectSlide from '../components/ProjectSlide.astro';
 import Taskbar from '../components/Taskbar.astro';
-import WorkSlide from '../components/WorkSlide.astro';
 import Base from '../layouts/Base.astro';
-import { profile } from '../lib/data.ts';
+import { achievements, deck, profile, visibleProjects } from '../lib/data.ts';
+
+const { pages, groups } = await deck();
+const projectById = new Map((await visibleProjects()).map((p) => [p.id, p]));
+const achievementById = new Map((await achievements()).map((a) => [a.id, a]));
+
+function must<T>(map: Map<string, T>, id: string): T {
+  const value = map.get(id);
+  if (value === undefined) throw new Error(`no content for page "${id}"`);
+  return value;
+}
+
+const firstProject =
+  groups.find((g) => g.id === 'projects') ?? groups.find((g) => g.id === 'internship');
+const workHref = `#${firstProject?.firstPageId ?? 'about'}`;
 ---
 
 <Base title={`${profile.name}: data science and AI portfolio`} description={profile.headline}>
   <Deck>
-    <HeroSlide />
-    <AboutSlide />
-    <WorkSlide />
-    <LearningSlide />
-    <ContactSlide />
+    {pages.map((page) => {
+      switch (page.group) {
+        case 'home':
+          return <HeroSlide page={page} workHref={workHref} />;
+        case 'about':
+          return <AboutSlide page={page} />;
+        case 'projects':
+        case 'internship':
+          return <ProjectSlide page={page} project={must(projectById, page.id)} />;
+        case 'achievements':
+          return <AchievementSlide page={page} entry={must(achievementById, page.id)} />;
+        case 'contact':
+          return <ContactSlide page={page} />;
+      }
+    })}
   </Deck>
-  <Taskbar />
+  <Taskbar groups={groups} />
 </Base>
