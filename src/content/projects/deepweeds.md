@@ -20,16 +20,19 @@ results:
     metric: test macro-F1
     n: 1,750 test images
     seeds: 1
+    highlight: true
   - label: Reproduction of that recipe
     value: 0.487 ± 0.021
     metric: test macro-F1
     n: 1,750 test images
     seeds: 3
+    highlight: true
   - label: AlexNet, team-standard pipeline
     value: 0.834 ± 0.003
     metric: test macro-F1
     n: 1,750 test images
     seeds: 3
+    highlight: true
   - label: AlexNet, team-standard pipeline
     value: 0.880 ± 0.002
     metric: test accuracy
@@ -45,6 +48,7 @@ results:
     metric: test macro-F1
     n: 1,750 test images
     seeds: 1
+    highlight: true
   - label: DINOv3 ViT-S/16, fine-tuned
     value: '0.951'
     metric: test macro-F1
@@ -55,6 +59,7 @@ results:
     metric: test macro-F1
     n: 1,750 test images
     seeds: 1
+    highlight: true
   - label: ConvNeXt-Tiny, modern training recipe
     value: '0.971'
     metric: test macro-F1

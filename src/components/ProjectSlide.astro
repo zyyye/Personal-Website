@@ -1,0 +1,208 @@
+---
+// One project or internship page in the deck. The side panel shows, in this order and only if the
+// content has it: a bar chart of the highlighted results, the highlight tiles, and the
+// "results withheld" note for work whose evaluation is being redone.
+import type { CollectionEntry } from 'astro:content';
+import { capitalise, formatRange, KIND_LABEL, shortTitle } from '../lib/format.ts';
+import { leadingNumber, type DeckPage } from '../lib/pages.ts';
+import Slide from './Slide.astro';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  page: DeckPage;
+  project: CollectionEntry<'projects'>;
+}
+const { page, project } = Astro.props;
+const d = project.data;
+const titleId = `${project.id}-title`;
+
+const highlighted = (d.results ?? []).filter((r) => r.highlight);
+// The content check guarantees these share one metric and sit between 0 and 1.
+const bars = highlighted.map((r) => ({
+  label: r.seeds && r.seeds > 1 ? `${r.label} (${r.seeds} seeds)` : r.label,
+  value: r.value,
+  width: `${((leadingNumber(r.value) ?? 0) * 100).toFixed(1)}%`,
+}));
+const first = highlighted[0];
+const chartCaption = first ? `${capitalise(first.metric)}, ${first.n}` : '';
+const withheld = !d.results && d.status === 'being-improved';
+---
+
+<Slide page={page} labelledby={titleId}>
+  <div class="project">
+    <div class="project__text">
+      <h2 id={titleId} class="page-title">
+        {shortTitle(d.title)}
+      </h2>
+      <p class="project__meta">
+        <StatusBadge status={d.status} />
+        <span>
+          {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
+        </span>
+      </p>
+      <p class="project__summary">{d.summary}</p>
+      <h3>My role</h3>
+      <p>{d.role}</p>
+      <ul class="tags" aria-label="Stack">
+        {d.stack.map((s) => (
+          <li>{s}</li>
+        ))}
+      </ul>
+      <p class="project__more">
+        <a class="pixel-button" href={`/projects/${project.id}/`}>
+          Read the case study
+        </a>
+      </p>
+    </div>
+
+    <div class="project__side">
+      {bars.length > 0 && (
+        <figure class="bars">
+          <figcaption>{chartCaption}</figcaption>
+          <ul>
+            {bars.map((b) => (
+              <li>
+                <span class="bars__label">{b.label}</span>
+                <span class="bars__value">{b.value}</span>
+                <span class="bars__track" aria-hidden="true">
+                  <span class="bars__fill" style={`width: ${b.width}`} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        </figure>
+      )}
+      {d.highlights && (
+        <ol class="tiles">
+          {d.highlights.map((h) => (
+            <li>
+              <span class="tiles__title">{h.title}</span>
+              <span class="tiles__detail">{h.detail}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      {withheld && (
+        <p class="withheld">
+          Results are withheld while the evaluation is redone.{' '}
+          <a href={`/projects/${project.id}/`}>See what the next version adds</a>
+        </p>
+      )}
+    </div>
+  </div>
+</Slide>
+
+<style>
+  .project {
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
+  }
+  @media (min-width: 64rem) {
+    .project {
+      grid-template-columns: minmax(0, 1fr) 30rem;
+      gap: 4rem;
+    }
+  }
+  .project__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin: 0 0 var(--space-3);
+    color: var(--color-text-muted);
+  }
+  .project__summary {
+    margin: 0 0 var(--space-4);
+    font-size: 1.1875rem;
+  }
+  h3 {
+    margin: 0 0 var(--space-2);
+    font-size: 1.125rem;
+    color: var(--color-accent);
+  }
+  .project__text > p {
+    max-width: 40rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tags li {
+    padding: 0.15em 0.6em;
+    font-size: 0.875rem;
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 2px var(--color-border);
+  }
+  .project__more {
+    margin: var(--space-4) 0 0;
+  }
+
+  .bars {
+    margin: 0;
+  }
+  .bars figcaption {
+    margin-bottom: var(--space-3);
+    font-weight: 700;
+  }
+  .bars ul {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .bars li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-3);
+    font-size: 0.9375rem;
+  }
+  .bars__value {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .bars__track {
+    grid-column: 1 / -1;
+    height: 1rem;
+    background: var(--color-surface);
+  }
+  .bars__fill {
+    display: block;
+    height: 100%;
+    background: var(--color-accent);
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tiles li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 2px var(--color-border);
+  }
+  .tiles__title {
+    font-weight: 700;
+  }
+  .tiles__detail {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+  .withheld {
+    margin: var(--space-4) 0 0;
+    padding: var(--space-3);
+    box-shadow: inset 0 0 0 2px var(--color-accent-2);
+  }
+</style>

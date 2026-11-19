@@ -5,7 +5,17 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-const SLIDE_IDS = ['hero', 'about', 'work', 'learning', 'contact'];
+// One page per project, internship and achievement, in deck order (src/lib/pages.ts).
+const SLIDE_IDS = [
+  'hero',
+  'about',
+  'deepweeds',
+  'logiclens',
+  'hf-agentic-ai-course',
+  'orbital-gemini',
+  'ibm-data-science',
+  'contact',
+];
 
 async function openDeck(page: Page): Promise<void> {
   await page.goto('/');
@@ -22,14 +32,21 @@ async function slideAtTop(page: Page): Promise<string | null> {
   });
 }
 
-test('home serves five slides and a five-link taskbar', async ({ page }) => {
+test('home serves one page per item and one taskbar key per group', async ({ page }) => {
   const res = await page.goto('/');
   expect(res?.status()).toBe(200);
-  await expect(page.locator('[data-slide]')).toHaveCount(5);
-  await expect(page.locator('[data-slide-link]')).toHaveCount(5);
   expect(await page.locator('[data-slide]').evaluateAll((els) => els.map((e) => e.id))).toEqual(
     SLIDE_IDS,
   );
+  const tabs = page.getByRole('navigation', { name: 'Pages' }).locator('[data-group-link]');
+  expect(await tabs.allInnerTexts()).toEqual([
+    'Home',
+    'About',
+    'Projects',
+    'Internship',
+    'Achievements',
+    'Contact',
+  ]);
 });
 
 test('unknown routes return the 404 page', async ({ page }) => {
@@ -69,7 +86,7 @@ test.describe('deck behaviour on screens where every slide fits', () => {
     await expect.poll(() => slideAtTop(page)).toBe('about');
 
     await page.keyboard.press('ArrowDown');
-    await expect.poll(() => slideAtTop(page)).toBe('work');
+    await expect.poll(() => slideAtTop(page)).toBe('deepweeds');
 
     await page.keyboard.press('End');
     await expect(page).toHaveURL(/#contact$/);
@@ -83,34 +100,44 @@ test.describe('deck behaviour on screens where every slide fits', () => {
     expect(await page.evaluate(() => history.length)).toBe(historyLength);
   });
 
-  test('taskbar jumps to a slide and marks it current', async ({ page }) => {
+  test("a taskbar key jumps to its group's first page and is marked current", async ({ page }) => {
     await openDeck(page);
-    const nav = page.getByRole('navigation', { name: 'Slides' });
-    await nav.getByRole('link', { name: 'Work' }).click();
-    await expect(page).toHaveURL(/#work$/);
-    await expect.poll(() => slideAtTop(page)).toBe('work');
-    await expect(nav.getByRole('link', { name: 'Work' })).toHaveAttribute('aria-current', 'true');
+    const nav = page.getByRole('navigation', { name: 'Pages' });
+    await nav.getByRole('link', { name: 'Achievements' }).click();
+    await expect(page).toHaveURL(/#hf-agentic-ai-course$/);
+    await expect.poll(() => slideAtTop(page)).toBe('hf-agentic-ai-course');
+    await expect(nav.getByRole('link', { name: 'Achievements' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
     await expect(nav.locator('[aria-current]')).toHaveCount(1);
   });
 
-  test('every taskbar item is fully visible, without sideways scrolling', async ({ page }) => {
+  test('the key stays current on every page of its group', async ({ page }) => {
+    await page.goto('/#orbital-gemini');
+    const nav = page.getByRole('navigation', { name: 'Pages' });
+    await expect(nav.getByRole('link', { name: 'Achievements' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    await expect(page.locator('#orbital-gemini')).toContainText('Achievements 2 of 3');
+  });
+
+  test('the step keys move one page down and up', async ({ page }) => {
     await openDeck(page);
-    const viewport = page.viewportSize();
-    const toggle = await page.getByRole('button', { name: 'Deck' }).boundingBox();
-    expect(viewport && toggle).toBeTruthy();
-    for (const link of await page.locator('[data-slide-link]').all()) {
-      const box = await link.boundingBox();
-      expect(box, await link.innerText()).toBeTruthy();
-      expect(box!.x, await link.innerText()).toBeGreaterThanOrEqual(0);
-      // Ends before the switch starts, so nothing is hidden under it.
-      expect(box!.x + box!.width, await link.innerText()).toBeLessThanOrEqual(toggle!.x);
-    }
-    expect(toggle!.x + toggle!.width).toBeLessThanOrEqual(viewport!.width);
+    const nav = page.getByRole('navigation', { name: 'Pages' });
+    await expect(nav.getByRole('button', { name: 'Previous page' })).toBeDisabled();
+    await nav.getByRole('button', { name: 'Next page' }).click();
+    await expect.poll(() => slideAtTop(page)).toBe('about');
+    await nav.getByRole('button', { name: 'Next page' }).click();
+    await expect.poll(() => slideAtTop(page)).toBe('deepweeds');
+    await nav.getByRole('button', { name: 'Previous page' }).click();
+    await expect.poll(() => slideAtTop(page)).toBe('about');
   });
 
   test('opening a slide link directly lands on that slide', async ({ page }) => {
-    await page.goto('/#learning');
-    await expect.poll(() => slideAtTop(page)).toBe('learning');
+    await page.goto('/#ibm-data-science');
+    await expect.poll(() => slideAtTop(page)).toBe('ibm-data-science');
   });
 
   test('manual switch turns the deck off and the choice persists', async ({ page }) => {
@@ -137,7 +164,7 @@ test.describe('deck behaviour on screens where every slide fits', () => {
       const filler = document.createElement('div');
       filler.id = 'test-filler';
       filler.style.height = '3000px';
-      document.querySelector('#about .window')?.append(filler);
+      document.querySelector('#about .slide__inner')?.append(filler);
     });
     await expect(page.locator('html')).toHaveAttribute('data-scroll', 'plain');
     const toggle = page.getByRole('button', { name: 'Deck' });
@@ -199,4 +226,89 @@ test('no page scrolls sideways', async ({ page }) => {
     );
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
+});
+
+test('every taskbar key is fully on screen and none overlap', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-scroll', /deck|plain/);
+  const viewport = page.viewportSize()!;
+  const boxes = await page.locator('nav[aria-label="Pages"] .key').evaluateAll((keys) =>
+    keys.map((k) => {
+      const r = k.getBoundingClientRect();
+      return {
+        name: k.getAttribute('aria-label') ?? k.textContent?.trim() ?? '',
+        left: r.left,
+        right: r.right,
+      };
+    }),
+  );
+  expect(boxes).toHaveLength(9); // six tabs, two step keys, the Deck switch
+  for (const b of boxes) {
+    expect(b.left, b.name).toBeGreaterThanOrEqual(0);
+    expect(b.right, b.name).toBeLessThanOrEqual(viewport.width);
+  }
+  for (let n = 1; n < boxes.length; n++) {
+    expect(
+      boxes[n]!.left,
+      `${boxes[n]!.name} overlaps ${boxes[n - 1]!.name}`,
+    ).toBeGreaterThanOrEqual(boxes[n - 1]!.right);
+  }
+});
+
+test('every in-page link points at an element on the page', async ({ page }) => {
+  await page.goto('/');
+  const missing = await page
+    .locator('a[href^="#"]')
+    .evaluateAll((as) =>
+      as
+        .map((a) => a.getAttribute('href')!.slice(1))
+        .filter((id) => id && !document.getElementById(id)),
+    );
+  expect(missing).toEqual([]);
+});
+
+test.describe('motion', () => {
+  test.skip(({ isMobile }) => isMobile, 'The name only moves on wide screens, where it is large.');
+
+  test('the name moves, and Pause motion stops it and is remembered', async ({ page }) => {
+    await page.goto('/');
+    const html = page.locator('html');
+    const name = page.locator('.hero__name');
+    await expect(html).toHaveAttribute('data-motion', 'on');
+    expect(await name.evaluate((el) => getComputedStyle(el).animationName)).toBe('name-depth');
+
+    const pause = page.getByRole('button', { name: 'Pause motion' });
+    await pause.click();
+    await expect(html).toHaveAttribute('data-motion', 'paused');
+    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    expect(await name.evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+
+    await page.reload();
+    await expect(html).toHaveAttribute('data-motion', 'paused');
+  });
+
+  test('with reduced motion the name is still and there is no pause button', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await expect(page.locator('html')).not.toHaveAttribute('data-motion', /.*/);
+    await expect(page.getByRole('button', { name: 'Pause motion' })).toBeHidden();
+  });
+
+  test('a page rises in as it scrolls into view, but not on first paint', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#hero .slide__inner')).not.toHaveClass(/is-entering/);
+    await page.getByRole('button', { name: 'Next page' }).click();
+    await expect(page.locator('#about .slide__inner')).toHaveClass(/is-entering/);
+  });
+});
+
+test.describe('motion without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+  test('the name is still and the pause button is not shown', async ({ page }) => {
+    await page.goto('/');
+    expect(
+      await page.locator('.hero__name').evaluate((el) => getComputedStyle(el).animationName),
+    ).toBe('none');
+    await expect(page.locator('[data-motion-toggle]')).toBeHidden();
+  });
 });

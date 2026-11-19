@@ -61,3 +61,19 @@ export function compareProjects(
 ): number {
   return a.order - b.order || b.period.start.localeCompare(a.period.start);
 }
+
+/** 'May to Jul 2027 (3 months)': the compact form used on the ID card. */
+export function formatAvailabilityShort(a: { start: string; end: string; months: number }): string {
+  return `${formatRange(a.start, a.end)} (${a.months} months)`;
+}
+
+/** ['a', 'b', 'c'] -> 'a, b or c'. */
+export function joinOr(items: readonly string[]): string {
+  if (items.length <= 1) return items[0] ?? '';
+  return `${items.slice(0, -1).join(', ')} or ${items.at(-1)}`;
+}
+
+/** 'test macro-F1' -> 'Test macro-F1': for text that starts a sentence or a caption. */
+export function capitalise(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}

@@ -26,6 +26,8 @@ export const resultSchema = z
     n: text,
     seeds: z.number().int().positive().optional(),
     note: text.optional(),
+    /** Shown as a bar on the project's page. All highlighted rows share one metric on a 0 to 1 scale. */
+    highlight: z.boolean().optional(),
   })
   .strict();
 
@@ -66,6 +68,11 @@ export const projectSchema = z
       .optional(),
     demo: demoSchema.optional(),
     results: z.array(resultSchema).optional(),
+    /** Up to four short facts shown as tiles on the project's page, e.g. the stages of a pipeline. */
+    highlights: z
+      .array(z.object({ title: text, detail: text }).strict())
+      .max(4)
+      .optional(),
     limitations: z.array(text),
     nextSteps: z.array(text).optional(),
     evidence: z.array(text),
@@ -81,6 +88,8 @@ export const learningSchema = z
     date: yearMonth.optional(),
     credentialUrl: httpsUrl.optional(),
     relatedProject: slug.optional(),
+    /** Two or three lines in Leo's own words on what it covered and what he built. */
+    summary: text.optional(),
   })
   .strict();
 
