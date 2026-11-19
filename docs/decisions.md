@@ -78,3 +78,13 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 - Type: Silkscreen (pixel face) for the name, window titles, project names and buttons only; Atkinson Hyperlegible Next for everything else, including section headings and the email address, because Silkscreen draws every letter as a capital. Both self-hosted from `@fontsource` (SIL Open Font License 1.1), Latin subset only.
 - Windows: a cyan title bar carrying the section's real heading, notched pixel corners and a hard offset shadow, drawn with `box-shadow` (no images). The name in the hero is the one bold element, with a two-step block shadow.
 - The desk's dot grid is static and never sits behind body text.
+
+## 2026-11-19: Redesign from the design lab (decided by Leo)
+
+- Theme "Black and mint"; ID-card home page; taskbar design 2, "pixel keys"; Sprout-bot mascot in the taskbar; the name's block shadow steps in a loop. Leo did not answer the defaults question, so the lab's defaults were kept for mascot, name motion, transition, accent and label style; each is a one-line change.
+- **Navigation:** one page per project, internship and achievement. Scrolling, swiping and keys move one page; the taskbar jumps to a group's first page or one page up or down (Leo: "both scroll and click"). The order comes from one pure function, `src/lib/pages.ts`, read by the pages, the taskbar and the script. This replaces the plan's five fixed slides and its cap of seven: the deck grows by one page per item.
+- **Achievements** are learning entries of kind certificate or course; exchange courses stay on the About page. An achievement page shows only real content (no placeholder is ever published): Leo adds `summary` and `credentialUrl`.
+- **Charts:** a project's bar chart is its results marked `highlight: true`; the content check requires one shared metric on a 0 to 1 scale and at most six bars.
+- **Position in a group** ("Achievements 2 of 3") is rendered on the page at build time rather than in the taskbar: always correct, no JavaScript, and it keeps the taskbar within 360 px.
+- **Motion exception to plan section 3A, rule 5 (no loops by default):** Leo chose a moving name. It runs only while the script shows a Pause motion button (WCAG 2.2.2), never without JavaScript or with reduced motion, and only at 64rem and wider.
+- **Narrow screens:** taskbar keys show icons only below 56rem (names kept for assistive technology); the mascot is hidden below 30rem.
