@@ -6,12 +6,28 @@
   "email": "yeozy2018@gmail.com",
   "linkedin": "https://www.linkedin.com/in/yeo-zhi-yuan",
   "github": null,
-  "cv": { "path": "/cv.pdf", "ready": false },
-  "photo": { "src": "/images/portrait.jpg", "alt": "Portrait of Yeo Zhi Yuan" },
+  "cv": {
+    "path": "/cv.pdf",
+    "ready": false
+  },
+  "photo": {
+    "src": "/images/portrait.jpg",
+    "alt": "Portrait of Yeo Zhi Yuan"
+  },
   "targetRoles": ["AI engineer", "Data scientist", "Data analyst"],
   "availability": [
-    { "label": "3-month internship", "start": "2027-05", "end": "2027-07", "months": 3 },
-    { "label": "Semester-long internship", "start": "2027-08", "end": "2027-12", "months": 6 }
+    {
+      "label": "3-month internship",
+      "start": "2027-05",
+      "end": "2027-07",
+      "months": 3
+    },
+    {
+      "label": "Semester-long internship",
+      "start": "2027-08",
+      "end": "2027-12",
+      "months": 6
+    }
   ],
   "about": {
     "talent": [
@@ -29,19 +45,27 @@
       }
     ],
     "story": [
-      { "when": "Nov 2023", "text": "Started private tutoring (ongoing)" },
       {
-        "when": "Feb 2024",
-        "text": "IBM Data Science Professional Certificate",
-        "ref": "ibm-data-science"
+        "when": "Jan 2022",
+        "text": "Fitness and Drill Instructor, SPF"
       },
-      { "when": "Aug 2024", "text": "Began BSc Data Science and Analytics at NUS" },
+      {
+        "when": "Nov 2023",
+        "text": "Started private tutoring (ongoing)"
+      },
+      {
+        "when": "Aug 2024",
+        "text": "Began BSc Data Science and Analytics at NUS"
+      },
       {
         "when": "May 2026",
         "text": "AI research intern: fine-tuned a 7B language model",
         "ref": "logiclens"
       },
-      { "when": "Sep 2026", "text": "Exchange at Tsinghua University (computer vision)" }
+      {
+        "when": "Sep 2026",
+        "text": "Exchange at Tsinghua University (computer vision)"
+      }
     ]
   }
 }

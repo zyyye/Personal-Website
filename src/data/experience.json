@@ -14,5 +14,13 @@
     "organisation": "Mindworks Tuition",
     "start": "2023-11",
     "showOnSite": true
+  },
+  {
+    "id": "fitness-drill-instructor",
+    "title": "Fitness and Drill Instructor",
+    "organisation": "SPF",
+    "start": "2022-01",
+    "end": "2023-11",
+    "showOnSite": true
   }
 ]
