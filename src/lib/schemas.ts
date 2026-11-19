@@ -123,6 +123,7 @@ export const educationSchema = z.array(
     .object({
       id: slug,
       institution: text,
+      shortName: text.optional(),
       credential: text,
       start: yearMonth,
       end: yearMonth.optional(),
