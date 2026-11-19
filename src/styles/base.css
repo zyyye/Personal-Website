@@ -53,6 +53,12 @@ li {
   text-wrap: pretty;
 }
 
+/* The hidden attribute must win over any component's display rule (a button with
+   display: inline-block otherwise stays visible). */
+[hidden] {
+  display: none !important;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

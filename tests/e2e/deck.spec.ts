@@ -266,3 +266,49 @@ test('every in-page link points at an element on the page', async ({ page }) => 
     );
   expect(missing).toEqual([]);
 });
+
+test.describe('motion', () => {
+  test.skip(({ isMobile }) => isMobile, 'The name only moves on wide screens, where it is large.');
+
+  test('the name moves, and Pause motion stops it and is remembered', async ({ page }) => {
+    await page.goto('/');
+    const html = page.locator('html');
+    const name = page.locator('.hero__name');
+    await expect(html).toHaveAttribute('data-motion', 'on');
+    expect(await name.evaluate((el) => getComputedStyle(el).animationName)).toBe('name-depth');
+
+    const pause = page.getByRole('button', { name: 'Pause motion' });
+    await pause.click();
+    await expect(html).toHaveAttribute('data-motion', 'paused');
+    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    expect(await name.evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+
+    await page.reload();
+    await expect(html).toHaveAttribute('data-motion', 'paused');
+  });
+
+  test('with reduced motion the name is still and there is no pause button', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await expect(page.locator('html')).not.toHaveAttribute('data-motion', /.*/);
+    await expect(page.getByRole('button', { name: 'Pause motion' })).toBeHidden();
+  });
+
+  test('a page rises in as it scrolls into view, but not on first paint', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#hero .slide__inner')).not.toHaveClass(/is-entering/);
+    await page.getByRole('button', { name: 'Next page' }).click();
+    await expect(page.locator('#about .slide__inner')).toHaveClass(/is-entering/);
+  });
+});
+
+test.describe('motion without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+  test('the name is still and the pause button is not shown', async ({ page }) => {
+    await page.goto('/');
+    expect(
+      await page.locator('.hero__name').evaluate((el) => getComputedStyle(el).animationName),
+    ).toBe('none');
+    await expect(page.locator('[data-motion-toggle]')).toBeHidden();
+  });
+});

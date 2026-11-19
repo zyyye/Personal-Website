@@ -52,3 +52,20 @@
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.1;
 }
+
+/* Page entrance (plan section 3A, motion budget: 200 to 300 ms). Added by src/scripts/motion.ts. */
+@media (prefers-reduced-motion: no-preference) {
+  .slide__inner.is-entering {
+    animation: page-rise 280ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+@keyframes page-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
