@@ -1,5 +1,5 @@
 /*
- * Design tokens: palette A, "Night Shift" (chosen by Leo, 19 Nov 2026; plan section 3A).
+ * Design tokens: "Black and mint" (chosen by Leo, 19 Nov 2026, from the design lab).
  * Every colour on the site comes from a variable here. tests/unit/contrast.test.ts checks the
  * text and focus pairs against WCAG thresholds.
  */
@@ -7,22 +7,22 @@
   color-scheme: dark;
 
   /* Palette */
-  --color-bg: #0e1322; /* night: the desk */
-  --color-surface: #182038; /* panel: window body */
-  --color-border: #3a4670; /* rule: frames and dividers */
-  --color-text: #eef1fa; /* paper */
-  --color-text-muted: #aab4d0; /* fog */
-  --color-accent: #ffb547; /* amber: anything you can click */
-  --color-accent-2: #5fd8e8; /* cyan: structure (title bars, section headings) */
-  --color-focus: #ffe066;
+  --color-bg: #000000; /* black: the desk */
+  --color-surface: #121212; /* panels, cards, the taskbar */
+  --color-border: #3d3d3d; /* frames and key edges */
+  --color-text: #f7f7f7;
+  --color-text-muted: #c2c2c2;
+  --color-accent: #b8f5d0; /* mint: anything you can click, and the current page */
+  --color-accent-2: #ffffff; /* white: structure (labels, the badge clip, the photo frame) */
+  --color-focus: #b8f5d0;
   --color-success: #7fe0a0;
   --color-warning: #ffd36b;
 
   /* Derived, decorative only (never used for text) */
-  --color-shadow: #070a14; /* hard pixel shadow */
-  --color-accent-deep: #b4741c; /* amber button shadow */
-  --color-accent-2-deep: #1d6b78; /* cyan extrusion behind the name */
-  --color-grid: #1c2540; /* desk dot grid */
+  --color-shadow: #262626; /* hard pixel shadow */
+  --color-accent-deep: #536e5e; /* mint at 45% on black: the name's block shadow */
+  --color-key: #1c1c1c; /* a taskbar key's face */
+  --color-grid: #1a1a1a; /* desk dot grid */
 
   /* Type: a pixel face for short display text only; a legible face for everything else. */
   --font-display: 'Silkscreen', ui-monospace, monospace;

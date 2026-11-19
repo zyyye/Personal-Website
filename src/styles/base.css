@@ -111,7 +111,7 @@ li {
   color: var(--color-bg);
   background: var(--color-accent);
   border: 0;
-  box-shadow: var(--px) var(--px) 0 0 var(--color-accent-deep);
+  box-shadow: var(--px) var(--px) 0 0 var(--color-shadow);
   cursor: pointer;
 }
 .pixel-button:hover {
