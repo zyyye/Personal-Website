@@ -20,30 +20,61 @@ const { title, description, current } = Astro.props;
 
 <style>
   .page {
-    max-width: 46rem;
+    max-width: 48rem;
+    min-height: 100vh;
     margin: 0 auto;
-    padding: var(--space-5) var(--space-3) calc(var(--taskbar-h) + var(--space-5));
+    padding: var(--space-5) clamp(var(--space-3), 4vw, var(--space-4))
+      calc(var(--taskbar-h) + var(--space-5));
+    /* A solid reading column: the desk's dot grid stays in the margins, never behind text. */
+    background: var(--color-bg);
   }
   .page :global(h1) {
-    font-family: var(--font-display);
-    line-height: 1.2;
+    margin: var(--space-3) 0;
+    font-size: clamp(1.75rem, 4.5vw, 2.5rem);
   }
   .page :global(h2) {
-    margin-top: var(--space-5);
-    font-family: var(--font-display);
+    margin: var(--space-5) 0 var(--space-3);
+    padding-left: 1.1em;
+    position: relative;
+    font-size: 1.375rem;
+  }
+  /* Cyan pixel marker on section headings, matching the slides' structure colour. */
+  .page :global(h2)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.32em;
+    width: 0.55em;
+    height: 0.55em;
+    background: var(--color-accent-2);
+  }
+  .page :global(p),
+  .page :global(li) {
+    max-width: 68ch;
   }
   .page :global(table) {
     width: 100%;
     border-collapse: collapse;
+    background: var(--color-surface);
   }
   .page :global(th),
   .page :global(td) {
-    padding: var(--space-2);
+    padding: var(--space-2) clamp(0.4rem, 2vw, var(--space-3));
     text-align: left;
+    overflow-wrap: anywhere;
     vertical-align: top;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 2px solid var(--color-bg);
+  }
+  .page :global(thead th) {
+    color: var(--color-accent-2);
+    font-weight: 700;
   }
   .page :global(li + li) {
-    margin-top: var(--space-1);
+    margin-top: var(--space-2);
+  }
+  .page :global(code) {
+    font-size: 0.9em;
+    padding: 0.05em 0.3em;
+    background: var(--color-surface);
   }
 </style>

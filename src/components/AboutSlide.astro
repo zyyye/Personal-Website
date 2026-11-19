@@ -1,8 +1,8 @@
 ---
 // Slide 2 (plan section 8.7): ID badge, then "What I'm good at", "Where I'm headed", "How I got here".
 import { education, learningEntries, profile, resolveTargets } from '../lib/data.ts';
-import { formatMonth } from '../lib/format.ts';
-import AvailabilityList from './AvailabilityList.astro';
+import { formatAvailability, formatMonth } from '../lib/format.ts';
+import Window from './Window.astro';
 
 const target = await resolveTargets();
 const { about, targetRoles, photo } = profile;
@@ -10,19 +10,14 @@ const learningNow = (await learningEntries()).filter((l) => l.data.status === 'i
 
 const uni = education[0];
 if (!uni) throw new Error('education.json needs at least one entry');
-const captionParts = [
-  `${uni.credential}, ${uni.shortName ?? uni.institution}`,
-  uni.minor ? `Minor in ${uni.minor}` : undefined,
-  uni.gpa && uni.gpaAsOf ? `GPA ${uni.gpa} (as of ${formatMonth(uni.gpaAsOf)})` : undefined,
-].filter(Boolean);
 ---
 
 <section id="about" class="slide" data-slide aria-labelledby="about-title">
-  <div class="window about">
-    <h2 id="about-title">About</h2>
+  <Window title="About" heading={{ level: 2, id: 'about-title' }} class="about">
     <div class="about__layout">
       <figure class="badge">
         <img
+          class="pixel-frame"
           src={photo.src}
           alt={photo.alt}
           width="400"
@@ -30,61 +25,80 @@ const captionParts = [
           loading="lazy"
           decoding="async"
         />
-        <figcaption>{captionParts.join('. ')}.</figcaption>
-      </figure>
-      <div class="about__panels">
-        <section class="panel" aria-labelledby="about-good">
-          <h3 id="about-good">What I'm good at</h3>
-          <ul>
-            {about.talent.map((t) => {
-              const e = target(t.evidence);
-              return (
-                <li>
-                  {t.text}{' '}
-                  <a class="chip" href={e.href}>
-                    {e.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-        <section class="panel" aria-labelledby="about-headed">
-          <h3 id="about-headed">Where I'm headed</h3>
-          <p>Aiming for, in order of preference: {targetRoles.join(', ')}.</p>
-          <AvailabilityList />
-          {learningNow.length > 0 && (
-            <p>Learning now: {learningNow.map((l) => l.data.title).join('; ')}.</p>
+        <figcaption>
+          <strong>{uni.credential}</strong>
+          <span>
+            {uni.shortName ?? uni.institution}
+            {uni.minor && `, minor in ${uni.minor}`}
+          </span>
+          {uni.gpa && uni.gpaAsOf && (
+            <span>
+              GPA {uni.gpa} (as of {formatMonth(uni.gpaAsOf)})
+            </span>
           )}
-          {about.ambitionWhy && <p>{about.ambitionWhy}</p>}
-        </section>
-        <section class="panel" aria-labelledby="about-story">
-          <h3 id="about-story">How I got here</h3>
-          <ol class="timeline">
-            {about.story.map((s) => (
+        </figcaption>
+      </figure>
+
+      <section class="panel" aria-labelledby="about-good">
+        <h3 id="about-good">What I'm good at</h3>
+        <ul class="pixel-list">
+          {about.talent.map((t) => {
+            const e = target(t.evidence);
+            return (
               <li>
-                <span class="timeline__when">{s.when}</span>
-                <span>{s.ref ? <a href={target(s.ref).href}>{s.text}</a> : s.text}</span>
+                {t.text}{' '}
+                <a class="evidence" href={e.href}>
+                  See {e.label}
+                </a>
               </li>
-            ))}
-          </ol>
-        </section>
-      </div>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="about-headed">
+        <h3 id="about-headed">Where I'm headed</h3>
+        <p>
+          Aiming for {targetRoles.slice(0, -1).join(', ')} or {targetRoles.at(-1)} roles, in that
+          order of preference.
+        </p>
+        <ul class="pixel-list">
+          {profile.availability.map((a) => (
+            <li>{formatAvailability(a)}</li>
+          ))}
+        </ul>
+        {learningNow.length > 0 && (
+          <p class="now">Learning now: {learningNow.map((l) => l.data.title).join(', ')}.</p>
+        )}
+        {about.ambitionWhy && <p>{about.ambitionWhy}</p>}
+      </section>
+
+      <section class="panel" aria-labelledby="about-story">
+        <h3 id="about-story">How I got here</h3>
+        <ol class="timeline">
+          {about.story.map((s) => (
+            <li>
+              <span class="timeline__when">{s.when}</span>
+              <span>{s.ref ? <a href={target(s.ref).href}>{s.text}</a> : s.text}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
     </div>
-  </div>
+  </Window>
 </section>
 
 <style>
   .about {
-    width: min(100%, 72rem);
+    width: min(100%, 76rem);
   }
   .about__layout {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-4) var(--space-5);
   }
   @media (min-width: 64rem) {
     .about__layout {
-      grid-template-columns: 11rem 1fr;
+      grid-template-columns: 10rem repeat(3, 1fr);
       align-items: start;
     }
   }
@@ -101,55 +115,72 @@ const captionParts = [
     }
   }
   .badge img {
-    width: clamp(4.5rem, 20vw, 11rem);
+    display: block;
+    width: clamp(5rem, 22vw, 10rem);
     height: auto;
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius);
+    margin: var(--px);
   }
   .badge figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
     font-size: 0.875rem;
+    line-height: 1.4;
     color: var(--color-text-muted);
   }
-  .about__panels {
-    display: grid;
-    gap: var(--space-3);
-  }
-  @media (min-width: 48rem) {
-    .about__panels {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  .badge figcaption strong {
+    color: var(--color-text);
   }
   .panel h3 {
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-3);
+    font-weight: 700;
+    font-size: 1.0625rem;
     color: var(--color-accent-2);
-    font-size: 1rem;
-    font-family: var(--font-display);
-  }
-  .panel ul,
-  .panel ol {
-    margin: 0;
-    padding-left: 1.2em;
   }
   .panel p {
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-3);
   }
-  .panel li + li {
-    margin-top: var(--space-1);
+  .now {
+    margin-top: var(--space-3) !important;
+    color: var(--color-text-muted);
   }
-  .chip {
-    font-size: 0.8125rem;
+  .evidence {
+    font-size: 0.875rem;
     white-space: nowrap;
   }
   .timeline {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 1.25rem;
     list-style: none;
-    padding-left: 0 !important;
+  }
+  /* A dotted rail with a square node per row: the content is a real sequence. */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0.5em;
+    bottom: 0.5em;
+    border-left: 2px dotted var(--color-border);
   }
   .timeline li {
-    display: grid;
-    grid-template-columns: 4.5rem 1fr;
-    gap: var(--space-2);
+    position: relative;
+  }
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    left: calc(-1.25rem);
+    top: 0.45em;
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent-2);
+  }
+  .timeline li + li {
+    margin-top: var(--space-2);
   }
   .timeline__when {
+    display: block;
+    font-size: 0.8125rem;
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
   }

@@ -71,3 +71,10 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 ## 2026-11-19: Contrast is a test, not a claim
 
 `src/lib/contrast.ts` computes WCAG contrast ratios; `tests/unit/contrast.test.ts` fails if any text pair in `tokens.css` drops below 4.5:1 or the focus colour below 3:1 (WCAG 2.x SC 1.4.3 and 1.4.11 thresholds).
+
+## 2026-11-19: Phase 3 design system (palette A chosen by Leo)
+
+- Palette A, "Night Shift". Roles: amber for anything clickable, cyan for structure (window title bars, section headings). Dark text on cyan and amber is also contrast-tested.
+- Type: Silkscreen (pixel face) for the name, window titles, project names and buttons only; Atkinson Hyperlegible Next for everything else, including section headings and the email address, because Silkscreen draws every letter as a capital. Both self-hosted from `@fontsource` (SIL Open Font License 1.1), Latin subset only.
+- Windows: a cyan title bar carrying the section's real heading, notched pixel corners and a hard offset shadow, drawn with `box-shadow` (no images). The name in the hero is the one bold element, with a two-step block shadow.
+- The desk's dot grid is static and never sits behind body text.

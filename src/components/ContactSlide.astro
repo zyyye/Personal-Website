@@ -1,68 +1,58 @@
 ---
 // Slide 5. GitHub and the CV appear only when ready (plan section 3, "Links and photo").
 import { profile } from '../lib/data.ts';
+import Window from './Window.astro';
 ---
 
 <section id="contact" class="slide" data-slide aria-labelledby="contact-title">
-  <div class="window contact">
-    <h2 id="contact-title">Contact</h2>
-    <dl class="contact__list">
-      <div>
-        <dt>Email</dt>
-        <dd>
-          <a href={`mailto:${profile.email}`}>{profile.email}</a>
-        </dd>
-      </div>
-      <div>
-        <dt>LinkedIn</dt>
-        <dd>
-          <a href={profile.linkedin} rel="me noopener">
-            {profile.linkedin.replace('https://www.', '')}
-          </a>
-        </dd>
-      </div>
+  <Window title="Contact" heading={{ level: 2, id: 'contact-title' }} class="contact">
+    <p class="contact__lead">The quickest way to reach me is email.</p>
+    <p class="contact__email">
+      <a href={`mailto:${profile.email}`}>{profile.email}</a>
+    </p>
+    <ul class="contact__links pixel-list">
+      <li>
+        <a href={profile.linkedin} rel="me">
+          LinkedIn
+        </a>
+      </li>
       {profile.github && (
-        <div>
-          <dt>GitHub</dt>
-          <dd>
-            <a href={profile.github} rel="me noopener">
-              {profile.github.replace('https://', '')}
-            </a>
-          </dd>
-        </div>
+        <li>
+          <a href={profile.github} rel="me">
+            GitHub
+          </a>
+        </li>
       )}
       {profile.cv.ready && (
-        <div>
-          <dt>CV</dt>
-          <dd>
-            <a href={profile.cv.path}>Download my CV (PDF)</a>
-          </dd>
-        </div>
+        <li>
+          <a href={profile.cv.path}>CV (PDF)</a>
+        </li>
       )}
-      <div>
-        <dt>Location</dt>
-        <dd>{profile.location}</dd>
-      </div>
-    </dl>
-  </div>
+    </ul>
+    <p class="contact__where">{profile.location}</p>
+  </Window>
 </section>
 
 <style>
   .contact {
-    width: min(100%, 40rem);
+    width: min(100%, 44rem);
   }
-  .contact__list {
-    margin: 0;
-  }
-  .contact__list div + div {
-    margin-top: var(--space-3);
-  }
-  dt {
+  .contact__lead {
+    margin: 0 0 var(--space-2);
     color: var(--color-text-muted);
-    font-size: 0.875rem;
   }
-  dd {
-    margin: 0;
+  .contact__email {
+    margin: 0 0 var(--space-5);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 5vw, 2.25rem);
     overflow-wrap: anywhere;
+  }
+  .contact__links {
+    margin-bottom: var(--space-5);
+  }
+  .contact__where {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
   }
 </style>

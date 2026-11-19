@@ -1,54 +1,85 @@
 ---
-// Slide 1 (plan section 3). Phase 4 replaces the plain name with pixel lettering and adds the mascot.
+// Slide 1 (plan section 3). The name is the one bold element on the site.
+// Phase 4 replaces it with assembled pixel lettering and adds the mascot beside it.
 import { profile } from '../lib/data.ts';
-import AvailabilityList from './AvailabilityList.astro';
+import { formatAvailability } from '../lib/format.ts';
+import Window from './Window.astro';
 ---
 
 <section id="hero" class="slide" data-slide aria-labelledby="hero-title">
-  <div class="window hero">
+  <Window title="Home" class="hero">
     <p class="hero__greeting">{profile.greeting}</p>
     <h1 id="hero-title" class="hero__name">
       {profile.name}
     </h1>
     <p class="hero__headline">{profile.headline}</p>
-    <div class="hero__availability">
-      <p class="hero__label">Open to internships</p>
-      <AvailabilityList />
+    <div class="hero__open">
+      <p class="hero__open-label">Open to internships</p>
+      <ul class="pixel-list">
+        {profile.availability.map((a) => (
+          <li>{formatAvailability(a)}</li>
+        ))}
+      </ul>
     </div>
-    <p class="hero__links">
-      <a href={profile.linkedin} rel="me noopener">
+    <p class="hero__actions">
+      <a class="pixel-button" href="#about">
+        Enter
+      </a>
+      <a class="pixel-button pixel-button--quiet" href={profile.linkedin} rel="me">
         LinkedIn
       </a>
-      <a href="#about" class="hero__enter">
-        Enter <span aria-hidden="true">↓</span>
-      </a>
     </p>
-  </div>
+  </Window>
 </section>
 
 <style>
   .hero__greeting {
-    margin: 0;
-    color: var(--color-accent-2);
-    font-family: var(--font-display);
-  }
-  .hero__name {
-    margin: 0.1em 0 0.3em;
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 8vw, 4rem);
-    line-height: 1.1;
-  }
-  .hero__headline {
-    max-width: 38rem;
-    font-size: clamp(1.05rem, 2.6vw, 1.3rem);
-  }
-  .hero__label {
-    margin: 0 0 var(--space-1);
+    margin: 0 0 var(--space-2);
+    font-size: 1.25rem;
     color: var(--color-text-muted);
   }
-  .hero__links {
+  .hero__name {
+    margin: 0 0 var(--space-4);
+    font-family: var(--font-display);
+    font-weight: 400;
+    /* Whole multiples of the face's 8px grid keep the pixels crisp. */
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+    text-shadow:
+      3px 3px 0 var(--color-accent-2-deep),
+      6px 6px 0 var(--color-shadow);
+  }
+  @media (min-width: 30rem) {
+    .hero__name {
+      font-size: 56px;
+      text-shadow:
+        4px 4px 0 var(--color-accent-2-deep),
+        8px 8px 0 var(--color-shadow);
+    }
+  }
+  @media (min-width: 64rem) {
+    .hero__name {
+      font-size: 96px;
+      text-shadow:
+        6px 6px 0 var(--color-accent-2-deep),
+        12px 12px 0 var(--color-shadow);
+    }
+  }
+  .hero__headline {
+    max-width: 34rem;
+    margin: 0 0 var(--space-4);
+    font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  }
+  .hero__open-label {
+    margin: 0 0 var(--space-2);
+    font-weight: 700;
+  }
+  .hero__actions {
     display: flex;
-    gap: var(--space-4);
-    margin-top: var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-5) 0 0;
   }
 </style>

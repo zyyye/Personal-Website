@@ -3,34 +3,38 @@
 // and courses, in-progress first.
 import { learningEntries, visibleProjects } from '../lib/data.ts';
 import { formatMonth, shortTitle } from '../lib/format.ts';
+import Window from './Window.astro';
 
 const projects = await visibleProjects();
 const learning = await learningEntries();
 ---
 
 <section id="learning" class="slide" data-slide aria-labelledby="learning-title">
-  <div class="window learning">
-    <h2 id="learning-title">Skills and learning</h2>
+  <Window title="Skills and learning" heading={{ level: 2, id: 'learning-title' }}>
     <div class="learning__cols">
       <section aria-labelledby="skills-title">
         <h3 id="skills-title">Skills, by where I used them</h3>
-        <dl class="skills">
+        <div class="skills">
           {projects.map((p) => (
-            <div>
-              <dt>
-                <a href={`/projects/${p.id}/`}>{shortTitle(p.data.title)}</a>
-              </dt>
-              <dd>{p.data.stack.join(', ')}</dd>
+            <div class="skills__group">
+              <a class="skills__project" href={`/projects/${p.id}/`}>
+                {shortTitle(p.data.title)}
+              </a>
+              <ul class="tags">
+                {p.data.stack.map((s) => (
+                  <li>{s}</li>
+                ))}
+              </ul>
             </div>
           ))}
-        </dl>
+        </div>
       </section>
       <section aria-labelledby="certs-title">
         <h3 id="certs-title">Certificates and courses</h3>
-        <ul class="certs">
+        <ul class="certs pixel-list">
           {learning.map((l) => (
             <li>
-              <span>{l.data.title}</span>
+              <span class="certs__title">{l.data.title}</span>
               <span class="certs__meta">
                 {l.data.provider},{' '}
                 {l.data.status === 'in-progress'
@@ -44,16 +48,13 @@ const learning = await learningEntries();
         </ul>
       </section>
     </div>
-  </div>
+  </Window>
 </section>
 
 <style>
-  .learning {
-    width: min(100%, 72rem);
-  }
   .learning__cols {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-5);
   }
   @media (min-width: 48rem) {
     .learning__cols {
@@ -61,33 +62,36 @@ const learning = await learningEntries();
     }
   }
   h3 {
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-3);
+    font-weight: 700;
+    font-size: 1.0625rem;
     color: var(--color-accent-2);
-    font-size: 1rem;
-    font-family: var(--font-display);
   }
-  .skills {
-    margin: 0;
+  .skills__group + .skills__group {
+    margin-top: var(--space-4);
   }
-  .skills div + div {
-    margin-top: var(--space-2);
+  .skills__project {
+    font-weight: 700;
   }
-  .skills dd {
-    margin: 0;
-  }
-  .certs {
-    margin: 0;
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-2) 0 0;
     padding: 0;
     list-style: none;
   }
-  .certs li {
-    display: flex;
-    flex-direction: column;
+  .tags li {
+    padding: 0.15em 0.6em;
+    font-size: 0.875rem;
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 2px var(--color-border);
   }
-  .certs li + li {
-    margin-top: var(--space-2);
+  .certs__title {
+    display: block;
   }
   .certs__meta {
+    display: block;
     font-size: 0.875rem;
     color: var(--color-text-muted);
   }

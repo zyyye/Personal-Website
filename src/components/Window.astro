@@ -1,0 +1,70 @@
+---
+// A "window" on the desk (plan section 3A): a cyan title bar naming the window, then the body.
+// When `heading` is set, the title bar text is the section's real heading, so the frame carries
+// information rather than decoration.
+interface Props {
+  title: string;
+  /** Render the title as a heading of this level (with this id), or as plain text. */
+  heading?: { level: 1 | 2; id: string };
+  class?: string;
+}
+const { title, heading, class: className } = Astro.props;
+const Tag = heading ? (`h${heading.level}` as const) : 'span';
+---
+
+<div class:list={['window', 'pixel-frame', className]}>
+  <div class="window__bar">
+    <Tag class="window__title" id={heading?.id}>
+      {title}
+    </Tag>
+    <span class="window__buttons" aria-hidden="true">
+      <i></i>
+      <i></i>
+      <i></i>
+    </span>
+  </div>
+  <div class="window__body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .window {
+    width: min(100%, 64rem);
+    background: var(--color-surface);
+  }
+  .window__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0.45rem var(--space-3);
+    background: var(--color-accent-2);
+    color: var(--color-bg);
+  }
+  .window__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  .window__buttons {
+    display: flex;
+    gap: 6px;
+  }
+  .window__buttons i {
+    width: 10px;
+    height: 10px;
+    background: var(--color-bg);
+  }
+  .window__body {
+    padding: clamp(var(--space-3), 3vw, var(--space-5));
+  }
+  .window__body > :global(:first-child) {
+    margin-top: 0;
+  }
+  .window__body > :global(:last-child) {
+    margin-bottom: 0;
+  }
+</style>

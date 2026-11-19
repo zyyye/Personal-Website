@@ -6,7 +6,8 @@ import ResultsTable from '../../components/ResultsTable.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
 import Page from '../../layouts/Page.astro';
 import { profile, visibleProjects } from '../../lib/data.ts';
-import { formatRange, KIND_LABEL } from '../../lib/format.ts';
+import { formatRange, KIND_LABEL, shortTitle } from '../../lib/format.ts';
+import Window from '../../components/Window.astro';
 
 export async function getStaticPaths() {
   const projects = await visibleProjects();
@@ -23,14 +24,16 @@ const resultsWithheld = !d.results && d.status === 'being-improved';
   <p class="crumb">
     <a href="/projects/">All projects</a>
   </p>
-  <h1>{d.title}</h1>
-  <p class="meta">
-    <StatusBadge status={d.status} />
-    <span>
-      {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
-    </span>
-  </p>
-  <p class="summary">{d.summary}</p>
+  <Window title={shortTitle(d.title)} class="case-head">
+    <h1>{d.title}</h1>
+    <p class="meta">
+      <StatusBadge status={d.status} />
+      <span>
+        {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
+      </span>
+    </p>
+    <p class="summary">{d.summary}</p>
+  </Window>
 
   <h2>My role</h2>
   <p>{d.role}</p>
@@ -93,13 +96,20 @@ const resultsWithheld = !d.results && d.status === 'being-improved';
     color: var(--color-text-muted);
   }
   .summary {
+    margin-bottom: 0;
     font-size: 1.125rem;
+  }
+  :global(.case-head) {
+    margin: var(--space-3) 0 var(--space-5);
+  }
+  :global(.case-head h1) {
+    margin-top: 0;
   }
   .withheld {
     margin-top: var(--space-5);
-    padding: var(--space-3);
-    border: 2px dashed var(--color-border);
-    border-radius: var(--radius);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 2px var(--color-warning);
   }
   .withheld h2 {
     margin-top: 0;

@@ -56,13 +56,13 @@ const pageLinks = [
     z-index: 10;
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-2);
     min-height: var(--taskbar-h);
-    /* Fluid sizes so all five links and the switch fit a 360px screen (plan section 3B, rule 2). */
-    font-size: clamp(0.8125rem, 3.4vw, 1rem);
     padding: var(--space-1) var(--space-2) calc(var(--space-1) + env(safe-area-inset-bottom, 0px));
     background: var(--color-surface);
-    border-top: 2px solid var(--color-border);
+    box-shadow: 0 calc(-1 * var(--px)) 0 0 var(--color-border);
+    /* Fluid sizes so all five links and the switch fit a 360px screen (plan section 3B, rule 2). */
+    font-size: clamp(0.8125rem, 3.4vw, 1rem);
   }
 
   .taskbar__links {
@@ -77,28 +77,37 @@ const pageLinks = [
 
   .taskbar__links a {
     display: block;
-    padding: var(--space-2) clamp(0.3rem, 1.4vw, 0.6rem);
+    padding: var(--space-2) clamp(0.3rem, 1.4vw, 0.75rem);
     color: var(--color-text);
+    font-weight: 700;
     text-decoration: none;
-    border-radius: var(--radius);
     white-space: nowrap;
+  }
+
+  .taskbar__links a:hover {
+    color: var(--color-accent);
   }
 
   .taskbar__links a[aria-current='true'],
   .taskbar__links a[aria-current='page'] {
-    background: var(--color-bg);
-    box-shadow: inset 0 -3px 0 var(--color-accent);
+    color: var(--color-accent);
+    box-shadow: inset 0 calc(-1 * var(--px)) 0 0 var(--color-accent);
   }
 
   .taskbar__mode {
     flex: none;
-    padding: var(--space-1) clamp(0.3rem, 1.4vw, 0.6rem);
+    padding: var(--space-2) clamp(0.4rem, 1.4vw, 0.75rem);
     font: inherit;
+    font-weight: 700;
     color: var(--color-text);
     background: var(--color-bg);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius);
+    border: 0;
+    box-shadow: inset 0 0 0 2px var(--color-border);
     cursor: pointer;
+  }
+
+  .taskbar__mode[aria-pressed='true'] .taskbar__state {
+    color: var(--color-accent);
   }
 
   .taskbar__mode[aria-disabled='true'] {

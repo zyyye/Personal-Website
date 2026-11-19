@@ -14,7 +14,7 @@
     "src": "/images/portrait.jpg",
     "alt": "Portrait of Yeo Zhi Yuan"
   },
-  "targetRoles": ["AI engineer", "Data scientist", "Data analyst"],
+  "targetRoles": ["AI engineer", "data scientist", "data analyst"],
   "availability": [
     {
       "label": "3-month internship",

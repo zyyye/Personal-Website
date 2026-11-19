@@ -14,12 +14,12 @@ const { status } = Astro.props;
 <style>
   .status {
     display: inline-block;
-    padding: 0.1em 0.5em;
-    font-size: 0.875em;
-    border: 1px solid currentColor;
-    border-radius: var(--radius);
-    color: var(--color-text-muted);
+    padding: 0.15em 0.55em;
+    font-size: 0.8125rem;
+    line-height: 1.3;
     white-space: nowrap;
+    color: var(--color-text-muted);
+    box-shadow: inset 0 0 0 2px currentColor;
   }
   .status[data-status='complete'] {
     color: var(--color-success);
