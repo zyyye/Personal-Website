@@ -36,6 +36,9 @@ export const REQUIRED_PAIRS: readonly [string, string, number][] = [
   // Dark text on the cyan title bars and on amber buttons.
   ['--color-bg', '--color-accent-2', 4.5],
   ['--color-bg', '--color-accent', 4.5],
+  // Taskbar keys and window bars: labels and the current key on the key face.
+  ['--color-text', '--color-key', 4.5],
+  ['--color-accent', '--color-key', 4.5],
   ['--color-focus', '--color-bg', 3],
   ['--color-focus', '--color-surface', 3],
 ];

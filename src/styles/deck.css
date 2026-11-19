@@ -24,7 +24,7 @@
   min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: var(--space-3);
+  padding: var(--space-5) clamp(var(--space-3), 6vw, 5.5rem);
   padding-bottom: calc(var(--taskbar-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
 }
 
@@ -38,4 +38,34 @@
   height: 100svh;
   visibility: hidden;
   pointer-events: none;
+}
+
+.slide__inner {
+  width: min(100%, 76rem);
+}
+
+/* The title of each deck page: pixel face, short text only (plan section 3A). */
+.page-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+/* Page entrance (plan section 3A, motion budget: 200 to 300 ms). Added by src/scripts/motion.ts. */
+@media (prefers-reduced-motion: no-preference) {
+  .slide__inner.is-entering {
+    animation: page-rise 280ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+@keyframes page-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

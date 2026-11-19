@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  capitalise,
   compareProjects,
   formatAvailability,
+  formatAvailabilityShort,
+  joinOr,
   formatMonth,
   formatRange,
   shortTitle,
@@ -60,5 +63,31 @@ describe('compareProjects', () => {
       { id: 'a', order: 1, period: { start: '2026-01' } },
     ];
     expect(list.sort(compareProjects).map((p) => p.id)).toEqual(['a', 'c', 'b']);
+  });
+});
+
+describe('formatAvailabilityShort', () => {
+  it('gives the range and the month count', () => {
+    expect(formatAvailabilityShort({ start: '2027-05', end: '2027-07', months: 3 })).toBe(
+      'May to Jul 2027 (3 months)',
+    );
+  });
+});
+
+describe('joinOr', () => {
+  it('joins with commas and a final "or"', () => {
+    expect(joinOr(['AI engineer', 'data scientist', 'data analyst'])).toBe(
+      'AI engineer, data scientist or data analyst',
+    );
+    expect(joinOr(['one', 'two'])).toBe('one or two');
+    expect(joinOr(['one'])).toBe('one');
+    expect(joinOr([])).toBe('');
+  });
+});
+
+describe('capitalise', () => {
+  it('upper-cases only the first character', () => {
+    expect(capitalise('test macro-F1')).toBe('Test macro-F1');
+    expect(capitalise('')).toBe('');
   });
 });

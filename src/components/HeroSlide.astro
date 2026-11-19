@@ -1,38 +1,101 @@
 ---
-// Slide 1 (plan section 3). The name is the one bold element on the site.
-// Phase 4 replaces it with assembled pixel lettering and adds the mascot beside it.
-import { profile } from '../lib/data.ts';
-import { formatAvailability } from '../lib/format.ts';
-import Window from './Window.astro';
+// Home page (ID-card layout, chosen by Leo from the design lab, 19 Nov 2026): the name is the one
+// bold element; the lab pass beside it puts the key facts on the first screen.
+import { education, profile } from '../lib/data.ts';
+import { formatAvailabilityShort, formatMonth, joinOr } from '../lib/format.ts';
+import type { DeckPage } from '../lib/pages.ts';
+import Slide from './Slide.astro';
+
+interface Props {
+  page: DeckPage;
+  /** Where "See my work" goes: the first project's page. */
+  workHref: string;
+}
+const { page, workHref } = Astro.props;
+
+const uni = education[0];
+if (!uni) throw new Error('education.json needs at least one entry');
+const facts = [
+  { term: 'Studying', value: `${uni.credential}, ${uni.shortName ?? uni.institution}` },
+  ...(uni.minor ? [{ term: 'Minor', value: uni.minor }] : []),
+  ...(uni.gpa && uni.gpaAsOf
+    ? [{ term: 'GPA', value: `${uni.gpa} (as of ${formatMonth(uni.gpaAsOf)})` }]
+    : []),
+  { term: 'Aiming for', value: `${joinOr(profile.targetRoles)} roles` },
+  { term: 'Available', value: joinOr(profile.availability.map(formatAvailabilityShort)) },
+  { term: 'Based in', value: profile.location },
+];
 ---
 
-<section id="hero" class="slide" data-slide aria-labelledby="hero-title">
-  <Window title="Home" class="hero">
-    <p class="hero__greeting">{profile.greeting}</p>
-    <h1 id="hero-title" class="hero__name">
-      {profile.name}
-    </h1>
-    <p class="hero__headline">{profile.headline}</p>
-    <div class="hero__open">
-      <p class="hero__open-label">Open to internships</p>
-      <ul class="pixel-list">
-        {profile.availability.map((a) => (
-          <li>{formatAvailability(a)}</li>
-        ))}
-      </ul>
+<Slide page={page} labelledby="hero-title">
+  <div class="hero">
+    <div class="hero__intro">
+      <p class="hero__greeting">{profile.greeting}</p>
+      <h1 id="hero-title" class="hero__name" data-name>
+        {profile.name}
+      </h1>
+      <p class="hero__headline">{profile.headline}</p>
+      <p class="hero__actions">
+        <a class="pixel-button" href={workHref}>
+          See my work
+        </a>
+        <a class="pixel-button pixel-button--quiet" href={profile.linkedin} rel="me">
+          LinkedIn
+        </a>
+        <button
+          type="button"
+          class="pixel-button pixel-button--quiet hero__pause"
+          data-motion-toggle
+          aria-pressed="false"
+          hidden
+        >
+          Pause motion
+        </button>
+      </p>
     </div>
-    <p class="hero__actions">
-      <a class="pixel-button" href="#about">
-        Enter
-      </a>
-      <a class="pixel-button pixel-button--quiet" href={profile.linkedin} rel="me">
-        LinkedIn
-      </a>
-    </p>
-  </Window>
-</section>
+
+    <aside class="badge pixel-frame" aria-labelledby="badge-title">
+      <span class="badge__clip" aria-hidden="true"></span>
+      <div class="badge__head">
+        <img
+          src={profile.photo.src}
+          alt={profile.photo.alt}
+          width="400"
+          height="500"
+          decoding="async"
+        />
+        <div>
+          <p class="badge__kicker" id="badge-title">
+            Lab pass
+          </p>
+          <p class="badge__name">{profile.name}</p>
+          <p class="badge__status">Open to internships</p>
+        </div>
+      </div>
+      <dl class="badge__facts">
+        {facts.map((f) => (
+          <>
+            <dt>{f.term}</dt>
+            <dd>{f.value}</dd>
+          </>
+        ))}
+      </dl>
+    </aside>
+  </div>
+</Slide>
 
 <style>
+  .hero {
+    display: grid;
+    gap: var(--space-5);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr) 26rem;
+      gap: 4rem;
+    }
+  }
   .hero__greeting {
     margin: 0 0 var(--space-2);
     font-size: 1.25rem;
@@ -43,43 +106,121 @@ import Window from './Window.astro';
     font-family: var(--font-display);
     font-weight: 400;
     /* Whole multiples of the face's 8px grid keep the pixels crisp. */
-    font-size: 32px;
-    line-height: 1;
-    letter-spacing: 0.02em;
+    font-size: 40px;
+    line-height: 1.05;
     color: var(--color-text);
     text-shadow:
-      3px 3px 0 var(--color-accent-2-deep),
+      3px 3px 0 var(--color-accent-deep),
       6px 6px 0 var(--color-shadow);
   }
   @media (min-width: 30rem) {
     .hero__name {
       font-size: 56px;
-      text-shadow:
-        4px 4px 0 var(--color-accent-2-deep),
-        8px 8px 0 var(--color-shadow);
     }
+  }
+  /* The name's loop runs only while src/scripts/motion.ts offers the pause button. */
+  :global(html[data-motion='on']) .hero__name {
+    animation: name-depth 2.4s steps(1, end) infinite;
+  }
+  @keyframes name-depth {
+    0%,
+    100% {
+      text-shadow:
+        3px 3px 0 var(--color-accent-deep),
+        6px 6px 0 var(--color-shadow);
+    }
+    25%,
+    75% {
+      text-shadow:
+        5px 5px 0 var(--color-accent-deep),
+        10px 10px 0 var(--color-shadow);
+    }
+    50% {
+      text-shadow:
+        7px 7px 0 var(--color-accent-deep),
+        14px 14px 0 var(--color-shadow);
+    }
+  }
+  .hero__pause[aria-pressed='true'] {
+    color: var(--color-bg);
+    background: var(--color-accent);
   }
   @media (min-width: 64rem) {
     .hero__name {
-      font-size: 96px;
+      font-size: 88px;
       text-shadow:
-        6px 6px 0 var(--color-accent-2-deep),
-        12px 12px 0 var(--color-shadow);
+        5px 5px 0 var(--color-accent-deep),
+        10px 10px 0 var(--color-shadow);
     }
   }
   .hero__headline {
-    max-width: 34rem;
-    margin: 0 0 var(--space-4);
+    max-width: 32rem;
+    margin: 0;
     font-size: clamp(1.125rem, 2.2vw, 1.375rem);
-  }
-  .hero__open-label {
-    margin: 0 0 var(--space-2);
-    font-weight: 700;
   }
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
     margin: var(--space-5) 0 0;
+  }
+
+  .badge {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: var(--px);
+    padding: 2.5rem 1.75rem 1.75rem;
+    background: var(--color-surface);
+  }
+  .badge__clip {
+    position: absolute;
+    top: -1.75rem;
+    left: 50%;
+    width: 4.5rem;
+    height: 2.25rem;
+    margin-left: -2.25rem;
+    background: var(--color-accent-2);
+    box-shadow: inset 0 0 0 var(--px) var(--color-bg);
+  }
+  .badge__head {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .badge__head img {
+    width: 7.5rem;
+    height: auto;
+    box-shadow: 0 0 0 var(--px) var(--color-accent-2);
+  }
+  .badge__head p {
+    margin: 0;
+  }
+  .badge__kicker {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    color: var(--color-accent-2);
+  }
+  .badge__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .badge__status {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+  .badge__facts {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .badge__facts dt {
+    color: var(--color-text-muted);
+  }
+  .badge__facts dd {
+    margin: 0;
   }
 </style>

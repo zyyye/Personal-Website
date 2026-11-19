@@ -53,6 +53,12 @@ li {
   text-wrap: pretty;
 }
 
+/* The hidden attribute must win over any component's display rule (a button with
+   display: inline-block otherwise stays visible). */
+[hidden] {
+  display: none !important;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -111,7 +117,7 @@ li {
   color: var(--color-bg);
   background: var(--color-accent);
   border: 0;
-  box-shadow: var(--px) var(--px) 0 0 var(--color-accent-deep);
+  box-shadow: var(--px) var(--px) 0 0 var(--color-shadow);
   cursor: pointer;
 }
 .pixel-button:hover {
