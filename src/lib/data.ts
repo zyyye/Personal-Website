@@ -62,7 +62,11 @@ export async function deck() {
   const projects = await visibleProjects();
   const achieved = await achievements();
   return buildDeck({
-    projects: projects.map((p) => ({ id: p.id, title: shortTitle(p.data.title), kind: p.data.kind })),
+    projects: projects.map((p) => ({
+      id: p.id,
+      title: shortTitle(p.data.title),
+      kind: p.data.kind,
+    })),
     achievements: achieved.map((a) => ({ id: a.id, title: a.data.title })),
   });
 }
