@@ -7,6 +7,7 @@ import educationJson from '../data/education.json';
 import experienceJson from '../data/experience.json';
 import profileJson from '../data/profile.json';
 import { compareProjects, shortTitle } from './format.ts';
+import { buildDeck } from './pages.ts';
 import { educationSchema, experienceSchema, profileSchema } from './schemas.ts';
 
 export const profile = profileSchema.parse(profileJson);
@@ -49,4 +50,19 @@ export async function resolveTargets(): Promise<(id: string) => Target> {
     if (!t) throw new Error(`unresolved reference "${id}"`);
     return t;
   };
+}
+
+/** Certificates and courses get achievement pages; exchange courses appear on the About page. */
+export async function achievements() {
+  return (await learningEntries()).filter((l) => l.data.kind !== 'exchange-course');
+}
+
+/** The home deck: one page per project, internship and achievement (src/lib/pages.ts). */
+export async function deck() {
+  const projects = await visibleProjects();
+  const achieved = await achievements();
+  return buildDeck({
+    projects: projects.map((p) => ({ id: p.id, title: shortTitle(p.data.title), kind: p.data.kind })),
+    achievements: achieved.map((a) => ({ id: a.id, title: a.data.title })),
+  });
 }

@@ -10,6 +10,11 @@ kind: internship
 role: AI Research Project Intern. Designed and built the pipeline end to end, from the synthetic data generator to training and inference.
 tags: [llm, nlp, fine-tuning]
 stack: [Python, PyTorch, Hugging Face Transformers, TRL, PEFT, Gemini API]
+highlights:
+  - { title: Short dialogues, detail: 'Stage 1: QLoRA, 4-bit' }
+  - { title: Five flaw types, detail: 'Stage 2: LoRA on the merged model' }
+  - { title: Long dialogues, detail: 'Stage 3: synthetic, 950 to 1,500 turns' }
+  - { title: Windowed training, detail: 'Stage 4: DoRA, 41 to 61-turn windows' }
 limitations:
   - No scores are shown yet. The current test split shares source dialogues with the training data and there are no baselines, so the evaluation is being redone.
   - The model tends to flag turns next to a real contradiction as well as the contradiction itself.
