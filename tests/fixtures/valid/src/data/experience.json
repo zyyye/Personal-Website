@@ -1,0 +1,17 @@
+[
+  {
+    "id": "example-job",
+    "title": "Example role",
+    "organisation": "Example organisation",
+    "start": "2023-01",
+    "showOnSite": true
+  },
+  {
+    "id": "hidden-job",
+    "title": "Hidden role",
+    "organisation": "Example organisation",
+    "start": "2022-01",
+    "end": "2022-12",
+    "showOnSite": false
+  }
+]

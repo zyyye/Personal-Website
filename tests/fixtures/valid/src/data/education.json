@@ -1,0 +1,11 @@
+[
+  {
+    "id": "example-uni",
+    "institution": "Example University",
+    "credential": "BSc Example",
+    "start": "2024-08",
+    "end": "2028-05",
+    "gpa": "4.00/5.00",
+    "gpaAsOf": "2026-05"
+  }
+]

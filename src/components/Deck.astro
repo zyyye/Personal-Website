@@ -1,0 +1,13 @@
+---
+// Container for the home-page slides (plan section 3B). Slides are passed in as children.
+import '../styles/deck.css';
+---
+
+<main class="deck">
+  <slot />
+</main>
+<div class="screen-probe" data-screen-probe aria-hidden="true"></div>
+
+<script>
+  import '../scripts/deck.ts';
+</script>

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "runDate": "2026-01-01",
+    "baseModel": "example-model",
+    "adapterLabel": "example-adapter",
+    "decoding": {
+      "doSample": false,
+      "maxNewTokens": 512
+    },
+    "hardware": "example GPU",
+    "casesFixedBeforeRun": true,
+    "fixture": false
+  },
+  "cases": [
+    {
+      "id": "example-case",
+      "title": "Example case",
+      "setting": "Invented: an example",
+      "turns": 6,
+      "inputText": "Speaker A: example.\nSpeaker B: example.",
+      "plantedFlaws": [
+        {
+          "turn": 3,
+          "description": "An example flaw."
+        }
+      ],
+      "output": {
+        "rawText": "FLAW [1]\nTURN: 3\nEXPLANATION: example.\n",
+        "sha256": "4b9b6e70929e526904a2bd0d3a75b2ff63ce693af94d861269e2d997237e108e",
+        "tokenCount": 12,
+        "truncatedAtCap": false
+      },
+      "timing": {
+        "totalMs": 1500,
+        "events": [
+          {
+            "type": "text",
+            "tMs": 400,
+            "text": "FLAW [1]\n"
+          },
+          {
+            "type": "text",
+            "tMs": 800,
+            "text": "TURN: 3\n"
+          },
+          {
+            "type": "text",
+            "tMs": 1200,
+            "text": "EXPLANATION: example.\n"
+          }
+        ]
+      }
+    }
+  ]
+}

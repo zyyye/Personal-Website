@@ -1,0 +1,28 @@
+{
+  "name": "Example Person",
+  "greeting": "Hi, I'm",
+  "headline": "Example headline.",
+  "location": "Example city",
+  "email": "person@example.com",
+  "linkedin": "https://www.linkedin.com/in/example",
+  "github": null,
+  "cv": { "path": "/cv.pdf", "ready": false },
+  "photo": { "src": "/images/example.jpg", "alt": "Portrait of Example Person" },
+  "targetRoles": ["Example role"],
+  "availability": [
+    { "label": "Example internship", "start": "2027-05", "end": "2027-07", "months": 3 }
+  ],
+  "about": {
+    "talent": [
+      { "text": "I do one example thing.", "evidence": "sample-project" },
+      { "text": "I do a second example thing.", "evidence": "sample-course" },
+      { "text": "I do a third example thing.", "evidence": "example-job" }
+    ],
+    "story": [
+      { "when": "Jan 2023", "text": "First example row", "ref": "example-job" },
+      { "when": "Jan 2024", "text": "Second example row" },
+      { "when": "Jan 2025", "text": "Third example row", "ref": "sample-project" },
+      { "when": "Jan 2026", "text": "Fourth example row" }
+    ]
+  }
+}

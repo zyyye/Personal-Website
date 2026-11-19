@@ -1,0 +1,89 @@
+---
+// Bottom taskbar (plan sections 3 and 3B): direct jumps to each slide, plus the manual
+// "Deck / Plain scroll" switch. Links are real anchors, so they work without JavaScript.
+import { SLIDES } from '../lib/slides.ts';
+---
+
+<nav class="taskbar" aria-label="Slides">
+  <ul class="taskbar__links">
+    {SLIDES.map((s) => (
+      <li>
+        <a href={`#${s.id}`} data-slide-link>
+          {s.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <button type="button" class="taskbar__mode" data-mode-toggle aria-pressed="false">
+    Deck{' '}
+    <span class="taskbar__state" data-mode-state aria-hidden="true">
+      Off
+    </span>
+  </button>
+</nav>
+
+<style>
+  .taskbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--taskbar-h);
+    /* Fluid sizes so all five links and the switch fit a 360px screen (plan section 3B, rule 2). */
+    font-size: clamp(0.8125rem, 3.4vw, 1rem);
+    padding: var(--space-1) var(--space-2) calc(var(--space-1) + env(safe-area-inset-bottom, 0px));
+    background: var(--color-surface);
+    border-top: 2px solid var(--color-border);
+  }
+
+  .taskbar__links {
+    display: flex;
+    flex: 1;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+  }
+
+  .taskbar__links a {
+    display: block;
+    padding: var(--space-2) clamp(0.3rem, 1.4vw, 0.6rem);
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius);
+    white-space: nowrap;
+  }
+
+  .taskbar__links a[aria-current='true'] {
+    background: var(--color-bg);
+    box-shadow: inset 0 -3px 0 var(--color-accent);
+  }
+
+  .taskbar__mode {
+    flex: none;
+    padding: var(--space-1) clamp(0.3rem, 1.4vw, 0.6rem);
+    font: inherit;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+
+  .taskbar__mode[aria-disabled='true'] {
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+  }
+
+  .taskbar__state {
+    color: var(--color-text-muted);
+  }
+
+  /* Without JavaScript the switch does nothing, so hide it. */
+  :global(html:not([data-scroll])) .taskbar__mode {
+    display: none;
+  }
+</style>

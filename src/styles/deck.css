@@ -1,0 +1,57 @@
+/*
+ * Deck (plan section 3B). The page is the scroll container (decided 19 Nov 2026).
+ * Snapping applies only when deck.ts sets data-scroll="deck" on <html>; without JavaScript, or
+ * when a slide does not fit, the page scrolls normally.
+ */
+:root[data-scroll='deck'] {
+  scroll-snap-type: y mandatory;
+}
+
+:root[data-scroll='deck'] .slide {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+}
+
+.slide {
+  /* Same height in both modes, so switching mode never changes layout. svh, not dvh: see plan 3B. */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+  padding-bottom: calc(var(--taskbar-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+}
+
+/* An invisible element exactly one small-viewport tall; deck.ts compares slides against it. */
+.screen-probe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100vh;
+  height: 100svh;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.window {
+  width: min(100%, 60rem);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.window > :first-child {
+  margin-top: 0;
+}
+
+.window > :last-child {
+  margin-bottom: 0;
+}
