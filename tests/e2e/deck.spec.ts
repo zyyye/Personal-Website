@@ -9,8 +9,9 @@ import { expect, test, type Page } from '@playwright/test';
 const SLIDE_IDS = [
   'hero',
   'about',
-  'deepweeds',
   'logiclens',
+  'deepweeds',
+  'airline-tweets',
   'hf-agentic-ai-course',
   'orbital-gemini',
   'ibm-data-science',
@@ -42,8 +43,8 @@ test('home serves one page per item and one taskbar key per group', async ({ pag
   expect(await tabs.allInnerTexts()).toEqual([
     'Home',
     'About',
-    'Projects',
     'Internship',
+    'Projects',
     'Achievements',
     'Contact',
   ]);
@@ -86,7 +87,7 @@ test.describe('deck behaviour on screens where every slide fits', () => {
     await expect.poll(() => slideAtTop(page)).toBe('about');
 
     await page.keyboard.press('ArrowDown');
-    await expect.poll(() => slideAtTop(page)).toBe('deepweeds');
+    await expect.poll(() => slideAtTop(page)).toBe('logiclens');
 
     await page.keyboard.press('End');
     await expect(page).toHaveURL(/#contact$/);
@@ -130,7 +131,7 @@ test.describe('deck behaviour on screens where every slide fits', () => {
     await nav.getByRole('button', { name: 'Next page' }).click();
     await expect.poll(() => slideAtTop(page)).toBe('about');
     await nav.getByRole('button', { name: 'Next page' }).click();
-    await expect.poll(() => slideAtTop(page)).toBe('deepweeds');
+    await expect.poll(() => slideAtTop(page)).toBe('logiclens');
     await nav.getByRole('button', { name: 'Previous page' }).click();
     await expect.poll(() => slideAtTop(page)).toBe('about');
   });
@@ -219,7 +220,13 @@ test('on a 360x640 phone the tall About slide switches the page to plain scrolli
 });
 
 test('no page scrolls sideways', async ({ page }) => {
-  for (const path of ['/', '/projects/', '/projects/deepweeds/', '/projects/logiclens/']) {
+  for (const path of [
+    '/',
+    '/projects/',
+    '/projects/deepweeds/',
+    '/projects/logiclens/',
+    '/projects/airline-tweets/',
+  ]) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

@@ -1,7 +1,9 @@
 {
   "name": "Yeo Zhi Yuan",
   "greeting": "Hi, I'm",
-  "headline": "Data science and AI student at NUS. I build ML systems and find out why they fail.",
+  "headline": "Data science and AI student at NUS. I fine-tune LLMs, build NLP and computer-vision pipelines, and find out why models fail. Now learning to build AI agents.",
+  "focus": ["NLP", "Computer vision", "LLM fine-tuning", "Agentic AI", "Model evaluation"],
+  "languages": ["Python", "Java", "C++", "HTML"],
   "location": "Singapore. On exchange at Tsinghua University, Beijing, until Jan 2027.",
   "email": "yeozy2018@gmail.com",
   "linkedin": "https://www.linkedin.com/in/yeo-zhi-yuan",
@@ -36,12 +38,16 @@
         "evidence": "deepweeds"
       },
       {
-        "text": "I build whole pipelines: data generation, training and inference.",
+        "text": "I build whole ML pipelines: data generation, training, inference and evaluation.",
         "evidence": "logiclens"
       },
       {
         "text": "I test claims with baselines, repeated seeds and confidence intervals.",
         "evidence": "deepweeds"
+      },
+      {
+        "text": "I audit my own results: I caught a data leak and two benchmark shortcuts.",
+        "evidence": "logiclens"
       }
     ],
     "story": [
@@ -59,7 +65,7 @@
       },
       {
         "when": "May 2026",
-        "text": "AI research intern: fine-tuned a 7B language model",
+        "text": "AI research intern at CNB: fine-tuned a 7B LLM",
         "ref": "logiclens"
       },
       {

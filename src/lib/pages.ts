@@ -16,11 +16,12 @@ export const GROUP_LABEL: Record<GroupId, string> = {
   contact: 'Contact',
 };
 
+// Internship before Projects (decided by Leo, 20 Nov 2026).
 const GROUP_ORDER: GroupId[] = [
   'home',
   'about',
-  'projects',
   'internship',
+  'projects',
   'achievements',
   'contact',
 ];

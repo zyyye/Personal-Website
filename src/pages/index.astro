@@ -8,7 +8,7 @@ import HeroSlide from '../components/HeroSlide.astro';
 import ProjectSlide from '../components/ProjectSlide.astro';
 import Taskbar from '../components/Taskbar.astro';
 import Base from '../layouts/Base.astro';
-import { achievements, deck, profile, visibleProjects } from '../lib/data.ts';
+import { achievements, deck, education, profile, visibleProjects } from '../lib/data.ts';
 
 const { pages, groups } = await deck();
 const projectById = new Map((await visibleProjects()).map((p) => [p.id, p]));
@@ -20,12 +20,28 @@ function must<T>(map: Map<string, T>, id: string): T {
   return value;
 }
 
-const firstProject =
-  groups.find((g) => g.id === 'projects') ?? groups.find((g) => g.id === 'internship');
-const workHref = `#${firstProject?.firstPageId ?? 'about'}`;
+// "See my work" opens the first work page in deck order (the internship comes first).
+const firstWork = groups.find((g) => g.id === 'internship' || g.id === 'projects');
+const workHref = `#${firstWork?.firstPageId ?? 'about'}`;
+
+// The same facts as the page, as schema.org data for search engines and AI screening tools.
+const uni = education[0];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  description: profile.headline,
+  sameAs: [profile.linkedin, ...(profile.github ? [profile.github] : [])],
+  knowsAbout: [...(profile.focus ?? []), ...(profile.languages ?? [])],
+  ...(uni ? { affiliation: { '@type': 'CollegeOrUniversity', name: uni.institution } } : {}),
+};
 ---
 
-<Base title={`${profile.name}: data science and AI portfolio`} description={profile.headline}>
+<Base
+  title={`${profile.name}: data science and AI portfolio`}
+  description={profile.headline}
+  jsonLd={jsonLd}
+>
   <Deck>
     {pages.map((page) => {
       switch (page.group) {

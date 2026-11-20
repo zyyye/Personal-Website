@@ -1,15 +1,15 @@
 ---
 title: 'DeepWeeds: why a CNN scored below baseline, and how it was fixed'
-summary: Team weed-classification project. I traced a below-baseline AlexNet to its causes (macro-F1 0.49 to 0.83) and benchmarked ConvNeXt and DINOv3.
+summary: Team computer-vision project on 9 weed classes. I traced a below-baseline AlexNet to its causes (macro-F1 0.49 to 0.83) and benchmarked ConvNeXt and DINOv3.
 status: complete
 featured: true
-order: 1
+order: 2
 hidden: false
 period: { start: '2026-01', end: '2026-04' }
 kind: team
-role: Wrote the team's AlexNet notebook, annotated about a quarter of all bounding boxes, worked on part of the YOLO and ResNet50 work, and co-wrote the report. Ran the follow-up investigation of the AlexNet result.
+role: Built the team's AlexNet baseline, annotated about a quarter of all bounding boxes, worked on part of the YOLO and ResNet50 work, and co-wrote the report. Then ran a follow-up investigation that found and fixed the root causes of the AlexNet result.
 tags: [computer-vision, deep-learning, experiment-design]
-stack: [Python, PyTorch, timm]
+stack: [Python, PyTorch, timm, YOLO]
 results:
   - label: Majority-class baseline
     value: '0.521'
@@ -75,6 +75,14 @@ nextSteps:
   - Add two more seeds for the modern-recipe rows.
 evidence: ['claude/deepweeds-alexnet-rerun.md (Claude Project doc)']
 ---
+
+## At a glance
+
+- **Fixed a model that scored below the majority-class baseline.** Took a transfer-learning AlexNet from 0.49 to 0.83 test macro-F1 (+71%, three seeds) by finding and removing its two root causes.
+- **Ran a controlled ablation.** 12 experiments, 26 training runs, three seeds and paired bootstrap confidence intervals (2,000 resamples). The largest single cause, a re-initialised first convolution layer, cost 0.17 macro-F1.
+- **Modernised the training recipe.** AdamW, warmup with cosine decay, label smoothing, TrivialAugment and mixed precision took AlexNet to 0.870 and ConvNeXt-Tiny to 0.971 macro-F1. ConvNeXt-Tiny also trained 4.6x faster (80.6 to 17.4 minutes, most likely thanks to mixed precision).
+- **Benchmarked a self-supervised foundation model.** DINOv3 ViT-S/16 with frozen features and a linear head reached 0.882 macro-F1 in 5.9 minutes, beating a fully fine-tuned AlexNet; fine-tuned, it reached 0.951.
+- **Team contribution.** Built the AlexNet baseline, annotated about a quarter of the bounding boxes, worked on parts of the YOLO and ResNet50 work, and co-wrote the report.
 
 ## Problem
 

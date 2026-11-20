@@ -111,6 +111,10 @@ export function runChecks(c: ContentSet): string[] {
     if (d.period.end && d.period.end < d.period.start) {
       err(`${p.file}: period.end is before period.start`);
     }
+    const logo = d.organisation?.logo;
+    if (logo && !c.publicFileExists(logo.src)) {
+      err(`${p.file}: organisation.logo.src "${logo.src}" does not exist in public/`);
+    }
     if (!d.hidden) errors.push(...placeholderErrors(p.file, d, p.body));
     for (const m of (p.body ?? '').matchAll(MD_LINK)) {
       const url = m[1] ?? '';

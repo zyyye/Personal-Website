@@ -68,6 +68,22 @@ export const projectSchema = z
       .optional(),
     demo: demoSchema.optional(),
     results: z.array(resultSchema).optional(),
+    /** Who the work was done for, e.g. an internship's employer. The logo file lives in public/. */
+    organisation: z
+      .object({
+        name: text,
+        logo: z
+          .object({
+            src: z.string().regex(/^\/[\w./-]+\.(png|svg|webp|jpg)$/),
+            alt: text,
+            width: z.number().int().positive(),
+            height: z.number().int().positive(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     /** Up to four short facts shown as tiles on the project's page, e.g. the stages of a pipeline. */
     highlights: z
       .array(z.object({ title: text, detail: text }).strict())
@@ -115,6 +131,10 @@ export const profileSchema = z
     name: text,
     greeting: text,
     headline: text,
+    /** Areas of work shown as chips under the headline on the home page. */
+    focus: z.array(text).min(1).optional(),
+    /** Programming and markup languages, shown on the home page's lab pass. */
+    languages: z.array(text).min(1).optional(),
     location: text,
     email: z.email(),
     linkedin: httpsUrl,

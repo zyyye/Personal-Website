@@ -20,7 +20,7 @@ test('every link on the home page to an internal page resolves', async ({ page, 
 test('About: each talent point links to its evidence', async ({ page }) => {
   await page.goto('/');
   const points = page.locator('#about-good + ul > li');
-  await expect(points).toHaveCount(3);
+  await expect(points).toHaveCount(4);
   for (const li of await points.all()) {
     await expect(li.locator('a')).toHaveCount(1);
   }
@@ -48,17 +48,38 @@ test('DeepWeeds case study: results table, follow-up label and limitations', asy
   await expect(page.getByRole('heading', { name: 'Limitations' })).toBeVisible();
 });
 
-test('LogicLens case study: no scores, placeholder card instead', async ({ page }) => {
+test('LogicLens case study: v2 results with their reference rules, and limitations', async ({
+  page,
+}) => {
   await page.goto('/projects/logiclens/');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('LogicLens');
+  await expect(page.getByRole('heading', { name: 'How it evolved' })).toBeVisible();
+  const rows = page.getByRole('region', { name: 'Results', exact: true }).locator('tbody tr');
+  await expect(rows).toHaveCount(6);
+  await expect(rows.filter({ hasText: 'Reference: rule that reads no text' })).toHaveCount(2);
+  await expect(page.getByRole('heading', { name: 'Limitations' })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'Results withheld while the evaluation is redone' }),
-  ).toBeVisible();
-  await expect(page.getByRole('region', { name: 'Results', exact: true })).toHaveCount(0);
+  ).toHaveCount(0);
+});
+
+test('Tweet Sentiment case study: baseline row, results table and limitations', async ({
+  page,
+}) => {
+  await page.goto('/projects/airline-tweets/');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Tweet Sentiment');
+  const rows = page.getByRole('region', { name: 'Results', exact: true }).locator('tbody tr');
+  await expect(rows).toHaveCount(7);
+  await expect(rows.filter({ hasText: 'Majority-class baseline' })).toHaveCount(1);
+  await expect(page.getByRole('heading', { name: 'Limitations' })).toBeVisible();
 });
 
 // Terms from plan section 8.2 that must not appear anywhere in the built site.
 const OFF_SITE =
   /\b(interrogat\w*|suspects?|narcotics?|drugs?|deception|declassified|redact\w*|dealers?|mules?|singlish|cnb|htx)\b/i;
+// The employer's name may appear (Leo, 20 Nov 2026), so it is removed before the check; the
+// words inside it are still caught anywhere else.
+const EMPLOYER = /Central Narcotics Bureau|\bCNB\b/g;
 
 function htmlFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => {
@@ -72,7 +93,7 @@ test('the built site contains none of the off-site terms', () => {
   const files = htmlFiles(dist);
   expect(files.length).toBeGreaterThan(0);
   const hits = files.flatMap((f) => {
-    const m = OFF_SITE.exec(readFileSync(f, 'utf8'));
+    const m = OFF_SITE.exec(readFileSync(f, 'utf8').replace(EMPLOYER, ''));
     return m ? [`${f}: "${m[0]}"`] : [];
   });
   expect(hits).toEqual([]);

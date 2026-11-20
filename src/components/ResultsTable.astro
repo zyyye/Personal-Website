@@ -8,6 +8,7 @@ interface Props {
 }
 const { results } = Astro.props;
 const anySeeds = results.some((r) => r.seeds !== undefined);
+const anySpread = results.some((r) => r.value.includes('±'));
 ---
 
 <div class="table-scroll" role="region" aria-label="Results" tabindex="0">
@@ -37,7 +38,7 @@ const anySeeds = results.some((r) => r.seeds !== undefined);
     </tbody>
   </table>
 </div>
-<p class="table-note">± is the standard deviation across seeds.</p>
+{anySpread && <p class="table-note">± is the standard deviation across seeds.</p>}
 
 <style>
   .table-scroll {
@@ -61,6 +62,7 @@ const anySeeds = results.some((r) => r.seeds !== undefined);
   thead th {
     color: var(--color-accent-2);
     font-weight: 700;
+    white-space: nowrap;
   }
   tbody th {
     font-weight: 400;

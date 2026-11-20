@@ -19,9 +19,9 @@ describe('buildDeck', () => {
     expect(pages.map((p) => p.id)).toEqual([
       'hero',
       'about',
+      'logiclens',
       'deepweeds',
       'un-voting',
-      'logiclens',
       'ibm',
       'orbital',
       'contact',
@@ -46,8 +46,8 @@ describe('buildDeck', () => {
     expect(groups.map((g) => [g.id, g.firstPageId, g.size])).toEqual([
       ['home', 'hero', 1],
       ['about', 'about', 1],
-      ['projects', 'deepweeds', 2],
       ['internship', 'logiclens', 1],
+      ['projects', 'deepweeds', 2],
       ['achievements', 'ibm', 2],
       ['contact', 'contact', 1],
     ]);

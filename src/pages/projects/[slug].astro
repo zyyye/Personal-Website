@@ -25,11 +25,24 @@ const resultsWithheld = !d.results && d.status === 'being-improved';
     <a href="/projects/">All projects</a>
   </p>
   <Window title={shortTitle(d.title)} class="case-head">
+    {d.organisation?.logo && (
+      <p class="org-logo">
+        <img
+          src={d.organisation.logo.src}
+          alt={d.organisation.logo.alt}
+          width={d.organisation.logo.width}
+          height={d.organisation.logo.height}
+          decoding="async"
+        />
+      </p>
+    )}
     <h1>{d.title}</h1>
     <p class="meta">
       <StatusBadge status={d.status} />
       <span>
-        {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
+        {KIND_LABEL[d.kind]}
+        {d.organisation && ` at ${d.organisation.name}`},{' '}
+        {formatRange(d.period.start, d.period.end)}
       </span>
     </p>
     <p class="summary">{d.summary}</p>
@@ -98,6 +111,18 @@ const resultsWithheld = !d.results && d.status === 'being-improved';
   .summary {
     margin-bottom: 0;
     font-size: 1.125rem;
+  }
+  /* A light plate, so a logo drawn for a white page stays legible on the dark theme. */
+  .org-logo {
+    display: inline-block;
+    margin: 0 0 var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-accent-2);
+  }
+  .org-logo img {
+    display: block;
+    width: auto;
+    height: 3rem;
   }
   :global(.case-head) {
     margin: var(--space-3) 0 var(--space-5);

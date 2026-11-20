@@ -172,6 +172,16 @@ describe('replay integrity', () => {
     editFile(root, PROJECT, 'dataFile: sample-replay.json', 'dataFile: missing.json');
     expectProblem(root, /not found in src\/data\/demos/);
   });
+  it('an organisation logo that is not in public/ fails', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      PROJECT,
+      'tags: [testing]\n',
+      'tags: [testing]\norganisation:\n  name: Example employer\n  logo: { src: /images/missing-logo.png, alt: Example logo, width: 100, height: 40 }\n',
+    );
+    expectProblem(root, /organisation\.logo\.src "\/images\/missing-logo\.png" does not exist/);
+  });
 });
 
 describe('profile and About slide (section 8.7)', () => {

@@ -4,6 +4,7 @@ import {
   compareProjects,
   formatAvailability,
   formatAvailabilityShort,
+  joinAnd,
   joinOr,
   formatMonth,
   formatRange,
@@ -82,6 +83,15 @@ describe('joinOr', () => {
     expect(joinOr(['one', 'two'])).toBe('one or two');
     expect(joinOr(['one'])).toBe('one');
     expect(joinOr([])).toBe('');
+  });
+});
+
+describe('joinAnd', () => {
+  it('joins with commas and a final "and"', () => {
+    expect(joinAnd(['Python', 'Java', 'C++', 'HTML'])).toBe('Python, Java, C++ and HTML');
+    expect(joinAnd(['one', 'two'])).toBe('one and two');
+    expect(joinAnd(['one'])).toBe('one');
+    expect(joinAnd([])).toBe('');
   });
 });
 

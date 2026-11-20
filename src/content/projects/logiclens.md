@@ -1,47 +1,117 @@
 ---
 title: 'LogicLens: multi-stage LLM fine-tuning for contradiction detection in long dialogues'
-summary: Fine-tuned a 7B LLM in four stages to find contradictions in 950 to 1,500-turn dialogues. I built the data generator, training code and inference pipeline.
+summary: Fine-tuned Mistral-7B (QLoRA, LoRA, DoRA) in four stages to find contradictions in 950 to 1,500-turn dialogues. Built the data engine, training and evaluation.
 status: being-improved
 featured: true
-order: 2
+order: 1
 hidden: false
 period: { start: '2026-05', end: '2026-08' }
 kind: internship
-role: AI Research Project Intern. Designed and built the pipeline end to end, from the synthetic data generator to training and inference.
-tags: [llm, nlp, fine-tuning]
-stack: [Python, PyTorch, Hugging Face Transformers, TRL, PEFT, Gemini API]
+organisation:
+  name: Central Narcotics Bureau (CNB)
+role: AI Research Project Intern. Designed and built the whole system end to end, from the synthetic data engine to custom training code, inference and evaluation, and presented it to senior management.
+tags: [llm, nlp, fine-tuning, evaluation]
+stack: [Python, PyTorch, Hugging Face Transformers, TRL, PEFT, bitsandbytes, Gemini API]
 highlights:
-  - { title: Short dialogues, detail: 'Stage 1: QLoRA, 4-bit' }
-  - { title: Five flaw types, detail: 'Stage 2: LoRA on the merged model' }
-  - { title: Long dialogues, detail: 'Stage 3: synthetic, 950 to 1,500 turns' }
-  - { title: Windowed training, detail: 'Stage 4: DoRA, 41 to 61-turn windows' }
+  - title: 7B LLM on one T4 GPU
+    detail: '4-bit QLoRA, LoRA, then DoRA: 43.3M trainable parameters (0.59%)'
+  - title: Synthetic data engine
+    detail: '45 dialogues of 950 to 1,500 turns, fault-tolerant across 12 API keys'
+  - title: Custom weighted loss
+    detail: 'Extended TRL: 2x weight on the quoted evidence, checked span by span'
+  - title: Evaluation audit
+    detail: 'Found a train/test leak and two shortcuts; turn-level F1 0.14 to 0.35'
+results:
+  - label: Zero-shot Mistral-7B-Instruct
+    value: '0.69'
+    metric: accuracy
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+  - label: Fine-tuned (v2)
+    value: '1.00'
+    metric: accuracy
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    note: A rule that reads no text also scores 1.00 on these windows (see Limitations).
+  - label: 'Reference: rule that reads no text (window length)'
+    value: '1.00'
+    metric: accuracy
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+  - label: Zero-shot Mistral-7B-Instruct
+    value: '0.14'
+    metric: F1 on contradiction turns
+    level: turn level
+    n: 32 contradiction turns among 1,696 turn rows
+    note: precision 0.12, recall 0.19
+  - label: Fine-tuned (v2)
+    value: '0.35'
+    metric: F1 on contradiction turns
+    level: turn level
+    n: 32 contradiction turns among 1,696 turn rows
+    note: precision 0.27, recall 0.50
+  - label: 'Reference: rule that reads no text (flag the turn 20 in from each edge)'
+    value: '0.86'
+    metric: F1 on contradiction turns
+    level: turn level
+    n: 32 contradiction turns among 1,696 turn rows
 limitations:
-  - No scores are shown yet. The current test split shares source dialogues with the training data and there are no baselines, so the evaluation is being redone.
-  - The model tends to flag turns next to a real contradiction as well as the contradiction itself.
-  - Inference is slow on a single T4 GPU, about 1,000 seconds for a window that contains a contradiction.
+  - Trained and tested on synthetic dialogues from one generator. The 6 test dialogues were never seen in training but come from the same generator, so this says nothing yet about real dialogues.
+  - The test set is small. It has 39 windows from 6 dialogues, and one dialogue holds 27 of the 32 contradiction turns. 39 of 39 correct has a 95% lower bound of 0.91 if windows are treated as independent, and 0.54 when counted by dialogue (6 of 6).
+  - The way the windows were cut leaves shortcuts. Every clean window is exactly 42 turns and no window with a contradiction is, so a rule that reads no text also classifies all 39 test windows correctly. Every contradiction sits at least 20 turns from a window edge, and flagging the turn 20 in from each edge scores turn-level F1 0.86. Whether the model uses these cues is not yet tested.
+  - Overlapping windows leave some real contradictions unlabelled, so some of the model's extra flags may be correct and turn-level precision is understated by an unknown amount.
+  - The model still flags turns next to a real contradiction.
+  - One training run and one seed.
+  - Inference is slow on a single T4. It averages about 120 seconds per window (4,772 s for 39 windows), and windows with contradictions take far longer than clean ones.
 nextSteps:
-  - Split the data by dialogue, not by window.
-  - Add a zero-shot Mistral baseline and a plain-LoRA baseline.
-  - Add a no-curriculum ablation.
-  - Report turn-level metrics next to window-level ones.
-  - Confirm which trained adapter each reported figure comes from.
-evidence: ['claude/logiclens-internship.md (Claude Project doc)']
+  - 'Build a test without the shortcuts: equal-length windows at random positions over whole test dialogues, every contradiction labelled, and clean windows taken from dialogues that do contain contradictions.'
+  - If the model relies on the shortcuts, cut the training windows the same way and retrain.
+  - Add a plain-LoRA baseline and a no-curriculum ablation.
+  - Re-run the unweighted variant on the same split.
+evidence:
+  [
+    'claude/logiclens-internship.md (Claude Project doc)',
+    'claude/logiclens-v2-site-brief.md (Claude Project doc)',
+  ]
 ---
 
 ## What it does
 
-Given a window of a long multi-speaker dialogue, the model lists the contradictions it finds as structured output: the turn, the verbatim line, and an explanation. If it finds none, it says so.
+Given a window of a long multi-speaker dialogue, the model lists every contradiction it finds as structured output: the turn, the verbatim line, and a one-sentence explanation. If it finds none, it says so. It is meant for reviewing long dialogues after they happen, where a person would otherwise read more than a thousand turns by hand.
 
-## Approach
+## At a glance
 
-- **Four-stage curriculum fine-tune** of Mistral-7B-Instruct-v0.3 with QLoRA (4-bit NF4, double quantisation), LoRA and DoRA, merging each stage's adapter before the next stage. Built with TRL and PEFT on free Kaggle T4 GPUs. The final stage is DoRA at rank 16 on all seven projection layers: 43.3M trainable parameters (0.59%), about 9 to 11.5 hours per run on one T4.
-- **Synthetic data engine** for dialogues of 950 to 1,500 turns: speaker profiles, and planned contradictions with a controlled distance between a statement and the turn that contradicts it (usually 50 to 70 turns, with 20% outliers). Dialogues are generated in 100-turn blocks, with a 200-turn sliding window plus the exact earlier statements pinned into each prompt. The generator survives API limits: it rotates across 12 keys, tells daily limits from per-minute ones when retrying, checkpoints after every block, and repairs and validates the JSON it receives.
-- **Data quality.** I audited the generated labels and removed 89 of 445 flags (20%) that sat on the wrong speaker, rewrote placeholder explanations flag by flag, and found and fixed label leakage in an early prototype.
-- **Long inputs.** Out-of-memory failures on full-length dialogues led to a windowing scheme: windows of 41 to 61 turns around flagged turns (20 turns either side, merged when within 15 turns, capped at 60), giving 295 windows and 356 flags from 36 dialogues.
-- **Custom training code.** The library's completion masking only switches tokens on or off (I checked its source), so I wrote a custom collator and an `SFTTrainer` subclass for per-token loss weights, weighting the quoted line's tokens 2x. Every weighted span's character-to-token mapping is checked by decoding it back. Training resumes cleanly inside the 12-hour GPU session limit.
-- **Debugging.** Fixed a tokeniser span-boundary bug, a chat-template mismatch at inference, and adapter-merge ordering errors.
-- **Design document.** Wrote an engineering design document proposing architectures for running the model inside a real-time pipeline.
+- **Fine-tuned a 7B LLM on free hardware.** A four-stage curriculum for Mistral-7B-Instruct-v0.3 with QLoRA (4-bit NF4, double quantisation), LoRA and DoRA, merging each stage's adapter into the model before the next. The final DoRA stage trains 43.3M parameters (0.59%) across all seven projection layers on a single 16 GB T4.
+- **Built the training data from scratch.** No labelled data existed, so I built a synthetic data engine on the Gemini API: 45 dialogues of 950 to 1,500 turns, with and without planted contradictions (1 to 5 per dialogue) at controlled distances (usually 50 to 70 turns apart, with 20% outliers).
+- **Made an external-API pipeline survive real limits.** Rotation across 12 API keys, retries that tell daily quotas apart from per-minute limits, a checkpoint after every 100-turn block, and JSON repair with schema validation.
+- **Cleaned the labels before training.** An audit removed 89 of 445 flags (20%) that sat on the wrong speaker, replaced a placeholder explanation with one written for each flag, and caught label leakage in an early prototype.
+- **Extended the training library.** TRL's completion masking only switches tokens on or off (I checked its source), so I wrote a custom collator and `SFTTrainer` subclass for per-token loss weights, counting the quoted evidence twice and verifying every weighted span by decoding it back.
+- **Rebuilt the evaluation.** Version 2 splits the data by dialogue instead of by window, adds a zero-shot baseline, and audits the benchmark for shortcuts. On 6 held-out dialogues the model classified all 39 windows correctly (zero-shot: 0.69) and raised turn-level F1 from 0.14 to 0.35.
+- **Made training faster and reproducible.** Pinned every library version and switched to gradient-equivalent batching, checked numerically, which made training about 17% faster per example.
+- **Took it to stakeholders.** Presented the work to senior management and received recognition; other departments then asked for details, seeing uses in their own work. Wrote an engineering design document proposing architectures for running the model in a real-time pipeline.
+
+## How it evolved
+
+Each version fixed something the previous one revealed.
+
+1. **Prototype: a yes-or-no classifier on short dialogues.** Reviewing its training data turned up label leakage, which would have inflated every score after it. I fixed it before building anything on top.
+2. **A curriculum instead of one big jump.** The model learns in stages: yes or no on short dialogues (Stage 1), then the structured output format and five contradiction types on short dialogues (Stage 2), then long dialogues (Stage 4, trained on the data Stage 3 generates). Each stage's adapter is merged in before the next. The format and the basic skill are cheaper to learn on short inputs.
+3. **Long dialogues ran out of GPU memory.** A full dialogue does not fit on a T4, so I cut 41 to 61-turn windows around each flagged turn: 20 turns either side, merged when flags are within 15 turns, capped at 60. That gave 295 windows and 356 flags from 36 dialogues.
+4. **The generated labels were wrong in places.** One flag in five sat on the speaker who pointed out a contradiction instead of the one who made it, and every flag shared the same placeholder explanation. I filtered the first and had each explanation rewritten from its own window.
+5. **The loss treated the key evidence like any other token.** Standard fine-tuning weights every output token equally, but the quoted line is what makes an answer checkable. I extended TRL so those tokens count twice.
+6. **The first scores were too good to trust.** Version 1 reported 0.93 window accuracy, but 29 of the 30 test windows came from dialogues also used in training, and there was no baseline. Version 2 splits by dialogue and compares against the untrained model.
+7. **Version 2 scored perfectly, so I checked the benchmark itself.** Every clean window is exactly 42 turns long, so a rule that never reads the text also scores perfectly. The next version tests the model on windows without that cue.
+
+## What this shows
+
+- Building training data when no labelled data exists, with control over difficulty.
+- Training a 7B model on a free 16 GB GPU with quantisation, adapters and resumable runs inside 12-hour session limits.
+- Making external-API pipelines reliable under quotas and failures.
+- Auditing data quality before modelling, not after.
+- Reading library source code and extending it where it falls short.
+- Distrusting good numbers: leakage checks, baselines, shortcut audits and confidence bounds.
+- Explaining technical work to non-technical managers and a non-technical supervisor.
 
 ## Status
 
-Version 2 is in progress and focuses on the evaluation. Results will be published once it uses a split by dialogue and includes baselines.
+Version 2 splits the data by dialogue and adds a zero-shot baseline. The next step is a test without the shortcuts described under Limitations.

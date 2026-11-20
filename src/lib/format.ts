@@ -67,6 +67,12 @@ export function formatAvailabilityShort(a: { start: string; end: string; months:
   return `${formatRange(a.start, a.end)} (${a.months} months)`;
 }
 
+/** ['a', 'b', 'c'] -> 'a, b and c'. */
+export function joinAnd(items: readonly string[]): string {
+  if (items.length <= 1) return items[0] ?? '';
+  return `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+}
+
 /** ['a', 'b', 'c'] -> 'a, b or c'. */
 export function joinOr(items: readonly string[]): string {
   if (items.length <= 1) return items[0] ?? '';

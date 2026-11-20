@@ -31,13 +31,26 @@ const withheld = !d.results && d.status === 'being-improved';
 <Slide page={page} labelledby={titleId}>
   <div class="project">
     <div class="project__text">
+      {d.organisation?.logo && (
+        <p class="org-logo">
+          <img
+            src={d.organisation.logo.src}
+            alt={d.organisation.logo.alt}
+            width={d.organisation.logo.width}
+            height={d.organisation.logo.height}
+            decoding="async"
+          />
+        </p>
+      )}
       <h2 id={titleId} class="page-title">
         {shortTitle(d.title)}
       </h2>
       <p class="project__meta">
         <StatusBadge status={d.status} />
         <span>
-          {KIND_LABEL[d.kind]}, {formatRange(d.period.start, d.period.end)}
+          {KIND_LABEL[d.kind]}
+          {d.organisation && ` at ${d.organisation.name}`},{' '}
+          {formatRange(d.period.start, d.period.end)}
         </span>
       </p>
       <p class="project__summary">{d.summary}</p>
@@ -103,6 +116,19 @@ const withheld = !d.results && d.status === 'being-improved';
       grid-template-columns: minmax(0, 1fr) 30rem;
       gap: 4rem;
     }
+  }
+  /* A light plate, so a logo drawn for a white page stays legible on the dark theme. */
+  .org-logo {
+    display: inline-block;
+    margin: 0 0 var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-accent-2);
+    box-shadow: 0 0 0 2px var(--color-border);
+  }
+  .org-logo img {
+    display: block;
+    width: auto;
+    height: 3rem;
   }
   .project__meta {
     display: flex;
