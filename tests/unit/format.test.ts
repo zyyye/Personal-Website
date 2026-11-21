@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  projectLinks,
   capitalise,
   compareProjects,
   formatAvailability,
@@ -115,5 +116,19 @@ describe('capitalise', () => {
   it('upper-cases only the first character', () => {
     expect(capitalise('test macro-F1')).toBe('Test macro-F1');
     expect(capitalise('')).toBe('');
+  });
+});
+
+describe('projectLinks', () => {
+  it('lists the links that are set, in display order, with their labels', () => {
+    expect(
+      projectLinks({ certificate: 'https://example.com/c', code: 'https://example.com/code' }),
+    ).toEqual([
+      { href: 'https://example.com/code', label: 'Source code' },
+      { href: 'https://example.com/c', label: 'Certificate' },
+    ]);
+  });
+  it('gives nothing for a project without links', () => {
+    expect(projectLinks(undefined)).toEqual([]);
   });
 });

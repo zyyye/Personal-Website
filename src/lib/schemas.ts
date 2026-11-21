@@ -67,6 +67,8 @@ export const projectSchema = z
         code: httpsUrl.optional(),
         report: httpsUrl.optional(),
         video: httpsUrl.optional(),
+        /** A credential awarded for the project itself, e.g. NUS Orbital's level of achievement. */
+        certificate: httpsUrl.optional(),
       })
       .strict()
       .optional(),
@@ -98,6 +100,20 @@ export const projectSchema = z
     highlights: z
       .array(z.object({ title: text, detail: text }).strict())
       .max(4)
+      .optional(),
+    /**
+     * How the project works, as 3 to 6 steps drawn top to bottom on its deck page. It fills the
+     * place of the results chart, so a project has either this or highlighted results.
+     */
+    flow: z
+      .object({
+        caption: text,
+        steps: z
+          .array(z.object({ title: text, detail: text }).strict())
+          .min(3)
+          .max(6),
+      })
+      .strict()
       .optional(),
     limitations: z.array(text),
     nextSteps: z.array(text).optional(),

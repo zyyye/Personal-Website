@@ -130,6 +130,9 @@ export function runChecks(c: ContentSet): string[] {
       err(`${p.file}: has results but no evidence`);
     }
     const highlighted = (d.results ?? []).filter((r) => r.highlight);
+    if (d.flow && highlighted.length > 0) {
+      err(`${p.file}: has both a flow and highlighted results; the deck page shows only one`);
+    }
     if ((d.resultsChart ?? 'bars') === 'bars') {
       if (highlighted.length > LIMITS.maxHighlightedResults) {
         err(

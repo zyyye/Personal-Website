@@ -12,6 +12,7 @@ const SLIDE_IDS = [
   'logiclens',
   'deepweeds',
   'airline-tweets',
+  'pollux',
   'hf-agentic-ai-course',
   'orbital-gemini',
   'ibm-data-science',
@@ -44,7 +45,7 @@ test('home serves one page per item and one taskbar key per group', async ({ pag
     'Home',
     'About',
     'Internship (1)',
-    'Projects (2)',
+    'Projects (3)',
     'Achievements (3)',
     'Contact',
   ]);
@@ -243,6 +244,7 @@ test('no page scrolls sideways', async ({ page }) => {
     '/projects/deepweeds/',
     '/projects/logiclens/',
     '/projects/airline-tweets/',
+    '/projects/pollux/',
   ]) {
     await page.goto(path);
     const overflow = await page.evaluate(

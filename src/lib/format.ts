@@ -99,3 +99,20 @@ export function joinOr(items: readonly string[]): string {
 export function capitalise(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
+
+const LINK_LABELS = {
+  code: 'Source code',
+  report: 'Report',
+  video: 'Video',
+  certificate: 'Certificate',
+} as const;
+
+/** A project's links in display order, each with the text its button shows. */
+export function projectLinks(
+  links: Partial<Record<keyof typeof LINK_LABELS, string>> | undefined,
+): { href: string; label: string }[] {
+  return (Object.keys(LINK_LABELS) as (keyof typeof LINK_LABELS)[]).flatMap((key) => {
+    const href = links?.[key];
+    return href ? [{ href, label: LINK_LABELS[key] }] : [];
+  });
+}

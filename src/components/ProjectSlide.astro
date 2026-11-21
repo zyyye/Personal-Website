@@ -4,9 +4,10 @@
 // (deckSkills) and stack, and
 // the case-study link. Right: the highlighted results, drawn as one bar chart per metric, or as one
 // grouped chart that compares the same series on several metrics (resultsChart: grouped), with a
-// link to the caveats; or the "results withheld" note. Highlight tiles run along the bottom.
+// link to the caveats; or the project's flow (how it works, step by step); or the "results
+// withheld" note. Highlight tiles run along the bottom.
 import type { CollectionEntry } from 'astro:content';
-import { capitalise, formatPeriod, KIND_LABEL, shortTitle } from '../lib/format.ts';
+import { capitalise, formatPeriod, KIND_LABEL, projectLinks, shortTitle } from '../lib/format.ts';
 import { leadingNumber, type DeckPage } from '../lib/pages.ts';
 import Slide from './Slide.astro';
 import StatusBadge from './StatusBadge.astro';
@@ -19,6 +20,7 @@ const { page, project } = Astro.props;
 const d = project.data;
 const titleId = `${project.id}-title`;
 const logo = d.organisation?.logo;
+const links = projectLinks(d.links);
 
 const highlighted = (d.results ?? []).filter((r) => r.highlight);
 const widthOf = (value: string) => `${((leadingNumber(value) ?? 0) * 100).toFixed(1)}%`;
@@ -108,6 +110,11 @@ const withheld = !d.results && d.status === 'being-improved';
         <a class="pixel-button" href={`/projects/${project.id}/`}>
           Read the case study
         </a>
+        {links.map((l) => (
+          <a class="pixel-button pixel-button--quiet" href={l.href}>
+            {l.label}
+          </a>
+        ))}
       </p>
     </div>
 
@@ -170,6 +177,19 @@ const withheld = !d.results && d.status === 'being-improved';
         <p class="caveats">
           <a href={`/projects/${project.id}/#limitations`}>Caveats and limitations</a>
         </p>
+      )}
+      {d.flow && (
+        <figure class="flow">
+          <figcaption>{d.flow.caption}</figcaption>
+          <ol>
+            {d.flow.steps.map((s) => (
+              <li>
+                <span class="flow__title">{s.title}</span>
+                <span class="flow__detail">{s.detail}</span>
+              </li>
+            ))}
+          </ol>
+        </figure>
       )}
       {withheld && (
         <p class="withheld">
@@ -276,6 +296,9 @@ const withheld = !d.results && d.status === 'being-improved';
     box-shadow: inset 0 0 0 2px var(--color-accent-2);
   }
   .project__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
     margin: var(--space-3) 0 0;
   }
 
@@ -426,6 +449,57 @@ const withheld = !d.results && d.status === 'being-improved';
     font-weight: 700;
   }
   .tiles__detail {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+  /* A project's flow: numbered steps joined by a short line, white structure (not mint). */
+  .flow {
+    margin: 0;
+  }
+  .flow figcaption {
+    margin-bottom: var(--space-3);
+    font-weight: 700;
+  }
+  .flow ol {
+    --flow-gap: var(--space-2);
+    display: grid;
+    gap: var(--flow-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  .flow li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    column-gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 2px var(--color-border);
+    counter-increment: step;
+  }
+  .flow li::before {
+    content: counter(step);
+    grid-row: span 2;
+    align-self: center;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-accent-2);
+  }
+  .flow li + li::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: calc(var(--space-3) + 0.75rem - 1px);
+    width: 2px;
+    height: var(--flow-gap);
+    background: var(--color-accent-2);
+  }
+  .flow__title {
+    font-weight: 700;
+  }
+  .flow__detail {
     font-size: 0.9375rem;
     color: var(--color-text-muted);
   }

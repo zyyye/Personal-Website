@@ -74,6 +74,28 @@ test('Tweet Sentiment case study: baseline row, results table and limitations', 
   await expect(page.getByRole('heading', { name: 'Limitations' })).toBeVisible();
 });
 
+test('POLLUX: pipeline on the deck page, code and certificate links, teammate unnamed', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const slide = page.locator('#pollux');
+  await expect(slide.locator('.flow li')).toHaveCount(6);
+  await expect(slide.getByRole('link', { name: 'Certificate' })).toHaveAttribute(
+    'href',
+    /^https:\/\/credentials\.nus\.edu\.sg\//,
+  );
+
+  await page.goto('/projects/pollux/');
+  await expect(page.getByRole('link', { name: 'Source code' })).toHaveAttribute(
+    'href',
+    'https://github.com/zyyye/POLLUX',
+  );
+  const html = await page.content();
+  // Teammates stay unnamed (plan), and the live app is not linked (Leo, 21 Nov 2026).
+  expect(html).not.toMatch(/tian\s*feng|huang/i);
+  expect(html).not.toContain('streamlit.app');
+});
+
 // Terms from plan section 8.2 that must not appear anywhere in the built site.
 const OFF_SITE =
   /\b(interrogat\w*|suspects?|narcotics?|drugs?|deception|declassified|redact\w*|dealers?|mules?|singlish|cnb|htx)\b/i;

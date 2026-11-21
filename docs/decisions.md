@@ -121,3 +121,21 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 
 - **Deck skills:** a project may list `deckSkills`, a few of its `skills` shown on its deck page before the stack chips, in the same style. The content check requires each one to be in `skills`. Leo chose six for DeepWeeds (computer vision; transfer learning; CNNs and vision transformers; ablation studies; statistical analysis with bootstrap confidence intervals; data annotation) and two for LogicLens (synthetic data generation; prompt engineering).
 - **Headline:** `headline` is now a list of sentences, each starting on its own line on the home page. The page description joins them with spaces.
+
+## 2026-11-21 (night): POLLUX project page (decided by Leo)
+
+- **New project:** POLLUX, the NUS Orbital team project (Apr to Aug 2025), is now a full project with a deck page and a case study. This replaces plan 8.4's "keep hidden until there is a demo, screenshot or result", at Leo's request. Sources: the LinkedIn project entry and poster, the NUS credential page, and the public repository `zyyye/POLLUX`.
+- **What it claims, and why:**
+  - Leo made 83 of the 122 commits.
+  - Line authorship shows his parts: sign-in, storage, the data summary, cleaning and the what-if predictions.
+  - Leo says the trend forecast was pair-programmed live with his teammate, who typed it, so the site credits the charts and the trend forecast to both.
+  - The poster's "on-the-fly LLM pipelines" claim is left out, because the code makes no LLM calls.
+  - The teammate stays unnamed.
+- **Links:**
+  - `links` gains `certificate`.
+  - Project links now render as quiet buttons on the deck page (after "Read the case study") and in the case-study header.
+  - POLLUX links its source code and its Orbital credential.
+  - The live Streamlit app is not linked (Leo): it sleeps and needs a sign-in.
+- **Flow:** a project without results may show `flow` (3 to 6 steps) in place of the chart. The content check rejects a project that has both a flow and highlighted results.
+- **Not used:** the repository's chart thumbnails (Matplotlib's gallery images) and its GIF (a stock background).
+- **Orbital certificate entry:** gains the credential link, a link to the project, and a summary taken from the credential page.

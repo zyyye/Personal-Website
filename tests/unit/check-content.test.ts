@@ -192,6 +192,17 @@ describe('replay integrity', () => {
     );
     expectProblem(root, /organisation\.logo\.src "\/images\/missing-logo\.png" does not exist/);
   });
+  it('a flow next to highlighted results fails', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      PROJECT,
+      'tags: [testing]\n',
+      'tags: [testing]\nflow:\n  caption: How it works\n  steps:\n    - { title: One, detail: First }\n    - { title: Two, detail: Second }\n    - { title: Three, detail: Third }\n',
+    );
+    editFile(root, PROJECT, 'n: 100 test items }', 'n: 100 test items, highlight: true }');
+    expectProblem(root, /has both a flow and highlighted results/);
+  });
   it('a deck skill that is not in skills fails', () => {
     const root = copyFixture();
     editFile(
