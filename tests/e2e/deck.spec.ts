@@ -136,6 +136,23 @@ test.describe('deck behaviour on screens where every slide fits', () => {
     await expect.poll(() => slideAtTop(page)).toBe('about');
   });
 
+  test('the mouse wheel turns exactly one page per gesture', async ({ page }) => {
+    await openDeck(page);
+    await page.mouse.move(640, 300);
+    await page.mouse.wheel(0, 120);
+    await expect.poll(() => slideAtTop(page)).toBe('about');
+    await page.waitForTimeout(1000); // let the turn and its quiet period finish
+
+    // A burst of wheel events (a flick, or trackpad inertia) still turns only one page.
+    for (let i = 0; i < 8; i++) await page.mouse.wheel(0, 60);
+    await expect.poll(() => slideAtTop(page)).toBe('logiclens');
+    await page.waitForTimeout(1200);
+    expect(await slideAtTop(page)).toBe('logiclens');
+
+    await page.mouse.wheel(0, -120);
+    await expect.poll(() => slideAtTop(page)).toBe('about');
+  });
+
   test('opening a slide link directly lands on that slide', async ({ page }) => {
     await page.goto('/#ibm-data-science');
     await expect.poll(() => slideAtTop(page)).toBe('ibm-data-science');

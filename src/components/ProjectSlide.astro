@@ -1,9 +1,11 @@
 ---
-// One project or internship page in the deck. The side panel shows, in this order and only if the
-// content has it: a bar chart per metric of the highlighted results with a link to the caveats,
-// the highlight tiles, and the "results withheld" note for work whose evaluation is being redone.
+// One project or internship page in the deck.
+// Left: the title block (with the employer's logo when there is one), summary, role, stack and
+// the case-study link. Right: the highlighted results, drawn as one bar chart per metric, or as one
+// grouped chart that compares the same series on several metrics (resultsChart: grouped), with a
+// link to the caveats; or the "results withheld" note. Highlight tiles run along the bottom.
 import type { CollectionEntry } from 'astro:content';
-import { capitalise, formatRange, KIND_LABEL, shortTitle } from '../lib/format.ts';
+import { capitalise, formatPeriod, KIND_LABEL, shortTitle } from '../lib/format.ts';
 import { leadingNumber, type DeckPage } from '../lib/pages.ts';
 import Slide from './Slide.astro';
 import StatusBadge from './StatusBadge.astro';
@@ -15,40 +17,71 @@ interface Props {
 const { page, project } = Astro.props;
 const d = project.data;
 const titleId = `${project.id}-title`;
+const logo = d.organisation?.logo;
 
 const highlighted = (d.results ?? []).filter((r) => r.highlight);
-// One chart per metric, in the order the metrics first appear, so the bars in a chart compare.
-// The content check caps the number of metrics and keeps every value between 0 and 1.
-const charts = [...new Set(highlighted.map((r) => r.metric))].map((metric) => {
-  const rows = highlighted.filter((r) => r.metric === metric);
-  return {
-    caption: `${capitalise(metric)}, ${rows[0]?.n ?? ''}`,
-    bars: rows.map((r) => ({
-      label: r.seeds && r.seeds > 1 ? `${r.label} (${r.seeds} seeds)` : r.label,
-      value: r.value,
-      width: `${((leadingNumber(r.value) ?? 0) * 100).toFixed(1)}%`,
-    })),
-  };
-});
+const widthOf = (value: string) => `${((leadingNumber(value) ?? 0) * 100).toFixed(1)}%`;
+
+// 'bars': one chart per metric, in the order the metrics first appear, so the bars in a chart
+// compare. The content check caps the number of metrics and keeps every value between 0 and 1.
+const grouped = d.resultsChart === 'grouped';
+const charts = grouped
+  ? []
+  : [...new Set(highlighted.map((r) => r.metric))].map((metric) => {
+      const rows = highlighted.filter((r) => r.metric === metric);
+      return {
+        caption: `${capitalise(metric)}, ${rows[0]?.n ?? ''}`,
+        bars: rows.map((r) => ({
+          label: r.seeds && r.seeds > 1 ? `${r.label} (${r.seeds} seeds)` : r.label,
+          value: r.value,
+          width: widthOf(r.value),
+        })),
+      };
+    });
+
+// 'grouped': series are the row labels; groups are metrics, under a heading per level. The content
+// check guarantees one row per series in every group.
+const series = grouped ? [...new Set(highlighted.map((r) => r.label))] : [];
+const levels = grouped
+  ? [...new Set(highlighted.map((r) => r.level ?? ''))].map((level) => {
+      const rows = highlighted.filter((r) => (r.level ?? '') === level);
+      const n = rows[0]?.n ?? '';
+      return {
+        heading: level ? `${capitalise(level)}, ${n}` : n,
+        groups: [...new Set(rows.map((r) => r.metric))].map((metric) => ({
+          metric: capitalise(metric),
+          bars: series.map((s, index) => {
+            const value = rows.find((r) => r.metric === metric && r.label === s)?.value ?? '';
+            return { series: s, index, value, width: widthOf(value) };
+          }),
+        })),
+      };
+    })
+  : [];
+
+const hasChart = charts.length > 0 || levels.length > 0;
 const withheld = !d.results && d.status === 'being-improved';
 ---
 
 <Slide page={page} labelledby={titleId}>
   <div class="project">
     <div class="project__text">
-      <div class="project__head">
-        {d.organisation?.logo && (
+      <div
+        class:list={['project__head', logo && 'project__head--logo']}
+        data-logo-fit={logo ? '' : undefined}
+      >
+        {logo && (
           <p class="org-logo">
             <img
-              src={d.organisation.logo.src}
-              alt={d.organisation.logo.alt}
-              width={d.organisation.logo.width}
-              height={d.organisation.logo.height}
+              src={logo.src}
+              alt={logo.alt}
+              width={logo.width}
+              height={logo.height}
               decoding="async"
             />
           </p>
         )}
-        <div>
+        <div class="project__titles" data-logo-fit-text>
           <h2 id={titleId} class="page-title">
             {shortTitle(d.title)}
           </h2>
@@ -57,7 +90,7 @@ const withheld = !d.results && d.status === 'being-improved';
             <span>
               {KIND_LABEL[d.kind]}
               {d.organisation && ` at ${d.organisation.name}`},{' '}
-              {formatRange(d.period.start, d.period.end)}
+              {formatPeriod(d.kind, d.period.start, d.period.end)}
             </span>
           </p>
         </div>
@@ -94,20 +127,48 @@ const withheld = !d.results && d.status === 'being-improved';
           </ul>
         </figure>
       ))}
-      {charts.length > 0 && d.limitations.length > 0 && (
+      {levels.length > 0 && (
+        <figure class="gchart" style={`--series: ${series.length}`}>
+          <figcaption class="gchart__legend">
+            {series.map((s, i) => (
+              <span class="gchart__key">
+                <span class={`gchart__swatch gchart__swatch--${i}`} aria-hidden="true" />
+                {s}
+              </span>
+            ))}
+          </figcaption>
+          {levels.map((l) => (
+            <div class="gchart__level">
+              <p class="gchart__heading">{l.heading}</p>
+              <ul>
+                {l.groups.map((g) => (
+                  <li class="gchart__group">
+                    <span class="gchart__metric">{g.metric}</span>
+                    {g.bars.map((b) => (
+                      <span class="gchart__bar">
+                        <span class="gchart__track" aria-hidden="true">
+                          <span
+                            class={`gchart__fill gchart__fill--${b.index}`}
+                            style={`width: ${b.width}`}
+                          />
+                        </span>
+                        <span class="gchart__value">
+                          <span class="visually-hidden">{b.series}: </span>
+                          {b.value}
+                        </span>
+                      </span>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </figure>
+      )}
+      {hasChart && d.limitations.length > 0 && (
         <p class="caveats">
           <a href={`/projects/${project.id}/#limitations`}>Caveats and limitations</a>
         </p>
-      )}
-      {d.highlights && (
-        <ol class="tiles">
-          {d.highlights.map((h) => (
-            <li>
-              <span class="tiles__title">{h.title}</span>
-              <span class="tiles__detail">{h.detail}</span>
-            </li>
-          ))}
-        </ol>
       )}
       {withheld && (
         <p class="withheld">
@@ -116,6 +177,17 @@ const withheld = !d.results && d.status === 'being-improved';
         </p>
       )}
     </div>
+
+    {d.highlights && (
+      <ol class="tiles">
+        {d.highlights.map((h) => (
+          <li>
+            <span class="tiles__title">{h.title}</span>
+            <span class="tiles__detail">{h.detail}</span>
+          </li>
+        ))}
+      </ol>
+    )}
   </div>
 </Slide>
 
@@ -128,41 +200,41 @@ const withheld = !d.results && d.status === 'being-improved';
   @media (min-width: 64rem) {
     .project {
       grid-template-columns: minmax(0, 1fr) 30rem;
-      gap: 4rem;
+      gap: var(--space-4) 4rem;
     }
   }
-  /* The employer's logo sits beside the title, on a light plate so a logo drawn for a white
-     page stays legible on the dark theme. */
-  .project__head {
-    display: flex;
-    gap: var(--space-4);
-    align-items: center;
+
+  /* With a logo, the logo is a square as tall as the title block beside it: it starts at the title
+     and ends with the meta line (Leo, 21 Nov 2026). src/scripts/logo-fit.ts sets --logo-size from
+     the block's height; the default fits a three-line block. On narrow screens it is capped. */
+  .project__head--logo {
+    /* The title's letters start 0.31em below its line box (Silkscreen at line-height 1.1,
+       measured), so the logo starts there too. */
+    --title-inset: calc(0.31 * var(--page-title-size));
+    --logo-box: min(calc(var(--logo-size, 8rem) - var(--title-inset)), 30vw);
+    display: grid;
+    grid-template-columns: var(--logo-box) minmax(0, 1fr);
+    column-gap: var(--space-4);
+    align-items: start;
+    margin-bottom: var(--space-3);
+  }
+  .project__head--logo .project__meta {
+    margin-bottom: 0;
   }
   .org-logo {
-    flex: none;
-    margin: 0;
+    box-sizing: border-box;
+    width: var(--logo-box);
+    height: var(--logo-box);
+    margin: var(--title-inset) 0 0;
     padding: var(--space-1);
     background: var(--color-accent-2);
     box-shadow: 0 0 0 2px var(--color-border);
   }
   .org-logo img {
     display: block;
-    width: auto;
-    height: 4.5rem;
-  }
-  @media (max-width: 30rem) {
-    .org-logo img {
-      height: 3.5rem;
-    }
-  }
-  .project__side {
-    display: grid;
-    gap: var(--space-4);
-    align-content: start;
-  }
-  .caveats {
-    margin: calc(-1 * var(--space-2)) 0 0;
-    font-size: 0.9375rem;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
   .project__meta {
     display: flex;
@@ -173,7 +245,7 @@ const withheld = !d.results && d.status === 'being-improved';
     color: var(--color-text-muted);
   }
   .project__summary {
-    margin: 0 0 var(--space-4);
+    margin: 0 0 var(--space-3);
     font-size: 1.1875rem;
   }
   h3 {
@@ -184,6 +256,9 @@ const withheld = !d.results && d.status === 'being-improved';
   .project__text > p {
     max-width: 40rem;
   }
+
+  /* Stack chips: white frame and bold text, so the tools read at a glance (Leo, 21 Nov 2026).
+     White, not mint: mint means clickable. */
   .tags {
     display: flex;
     flex-wrap: wrap;
@@ -193,13 +268,24 @@ const withheld = !d.results && d.status === 'being-improved';
     list-style: none;
   }
   .tags li {
-    padding: 0.15em 0.6em;
-    font-size: 0.875rem;
+    padding: 0.25em 0.7em;
+    font-size: 0.9375rem;
+    font-weight: 700;
     background: var(--color-surface);
-    box-shadow: inset 0 0 0 2px var(--color-border);
+    box-shadow: inset 0 0 0 2px var(--color-accent-2);
   }
   .project__more {
-    margin: var(--space-4) 0 0;
+    margin: var(--space-3) 0 0;
+  }
+
+  .project__side {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .caveats {
+    margin: calc(-1 * var(--space-2)) 0 0;
+    font-size: 0.9375rem;
   }
 
   .bars {
@@ -237,6 +323,81 @@ const withheld = !d.results && d.status === 'being-improved';
     background: var(--color-accent);
   }
 
+  /* Grouped chart: a metric label on the left spanning one bar per series. Series colours: grey,
+     then mint (the result being shown off), then white. */
+  .gchart {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .gchart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-bottom: var(--space-3);
+    font-weight: 700;
+  }
+  .gchart__key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .gchart__swatch {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .gchart__level + .gchart__level {
+    margin-top: var(--space-3);
+  }
+  .gchart__heading {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+  }
+  .gchart ul {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .gchart__group {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr) 2.75rem;
+    align-items: center;
+    gap: 3px var(--space-3);
+  }
+  .gchart__metric {
+    grid-row: span var(--series);
+    font-weight: 700;
+  }
+  .gchart__bar {
+    display: contents;
+  }
+  .gchart__track {
+    height: 0.75rem;
+    background: var(--color-surface);
+  }
+  .gchart__fill {
+    display: block;
+    height: 100%;
+  }
+  .gchart__value {
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    text-align: right;
+  }
+  .gchart__swatch--0,
+  .gchart__fill--0 {
+    background: var(--color-text-muted);
+  }
+  .gchart__swatch--1,
+  .gchart__fill--1 {
+    background: var(--color-accent);
+  }
+  .gchart__swatch--2,
+  .gchart__fill--2 {
+    background: var(--color-accent-2);
+  }
+
   .tiles {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -252,6 +413,13 @@ const withheld = !d.results && d.status === 'being-improved';
     padding: var(--space-3);
     background: var(--color-surface);
     box-shadow: inset 0 0 0 2px var(--color-border);
+  }
+  @media (min-width: 64rem) {
+    /* The highlight tiles run in one row along the bottom (Leo, 21 Nov 2026). */
+    .tiles {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
   .tiles__title {
     font-weight: 700;

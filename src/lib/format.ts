@@ -26,6 +26,22 @@ export function formatRange(start: string, end?: string): string {
     : `${formatMonth(start)} to ${formatMonth(end)}`;
 }
 
+/** Calendar months a period touches, counting both ends: '2026-05' to '2026-08' is 4. */
+export function monthsInclusive(start: string, end: string): number {
+  const [sy, sm] = start.split('-').map(Number);
+  const [ey, em] = end.split('-').map(Number);
+  if (!sy || !sm || !ey || !em) throw new Error(`bad period ${start} to ${end}`);
+  return (ey - sy) * 12 + (em - sm) + 1;
+}
+
+/** An internship shows its length after the dates: 'May to Aug 2026 (4 months)'. */
+export function formatPeriod(kind: string, start: string, end?: string): string {
+  const range = formatRange(start, end);
+  if (kind !== 'internship' || !end) return range;
+  const n = monthsInclusive(start, end);
+  return `${range} (${n} ${n === 1 ? 'month' : 'months'})`;
+}
+
 /** 'Semester-long internship (6 months), Aug to Dec 2027' (plan section 5). */
 export function formatAvailability(a: {
   label: string;

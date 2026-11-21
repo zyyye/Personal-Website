@@ -10,6 +10,14 @@ kind: team
 role: Built the team's AlexNet baseline, annotated about a quarter of all bounding boxes, worked on part of the YOLO and ResNet50 work, and co-wrote the report. Then ran a follow-up investigation that found and fixed the root causes of the AlexNet result.
 tags: [computer-vision, deep-learning, experiment-design]
 stack: [Python, PyTorch, timm, YOLO]
+skills:
+  - Computer vision
+  - Transfer learning
+  - CNNs and vision transformers
+  - Ablation studies
+  - Model evaluation
+  - Statistical analysis (bootstrap confidence intervals)
+  - Data annotation
 results:
   - label: Majority-class baseline
     value: '0.521'
@@ -26,7 +34,6 @@ results:
     metric: test macro-F1
     n: 1,750 test images
     seeds: 3
-    highlight: true
   - label: AlexNet, team-standard pipeline
     value: 0.834 ± 0.003
     metric: test macro-F1
@@ -38,9 +45,16 @@ results:
     metric: test accuracy
     n: 1,750 test images
     seeds: 3
-  - label: AlexNet, modern training recipe
+  - label: AlexNet (Improved pipeline)
     value: '0.870'
     metric: test macro-F1
+    n: 1,750 test images
+    seeds: 1
+    note: 'Team-standard pipeline plus a modern recipe (AdamW, warmup and cosine decay, label smoothing, TrivialAugment, mixed precision). +0.036 over the team-standard AlexNet; 95% paired bootstrap interval +0.021 to +0.062.'
+    highlight: true
+  - label: AlexNet (Improved pipeline)
+    value: '0.903'
+    metric: test accuracy
     n: 1,750 test images
     seeds: 1
   - label: DINOv3 ViT-S/16, frozen features + linear head

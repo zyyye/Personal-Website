@@ -58,6 +58,8 @@ export const projectSchema = z
     team: z.array(text).optional(),
     tags: z.array(slug),
     stack: z.array(text),
+    /** Skills the project shows (named as on LinkedIn where they appear there): case-study chips. */
+    skills: z.array(text).min(1).optional(),
     links: z
       .object({
         code: httpsUrl.optional(),
@@ -68,6 +70,12 @@ export const projectSchema = z
       .optional(),
     demo: demoSchema.optional(),
     results: z.array(resultSchema).optional(),
+    /**
+     * How the deck page draws the highlighted results. 'bars' (default): one chart per metric.
+     * 'grouped': one chart, a group per level and metric, a bar per series (row label) in each, so
+     * two models can be compared on several metrics at once.
+     */
+    resultsChart: z.enum(['bars', 'grouped']).optional(),
     /** Who the work was done for, e.g. an internship's employer. The logo file lives in public/. */
     organisation: z
       .object({
@@ -122,6 +130,8 @@ export const aboutSchema = z
   .object({
     talent: z.array(z.object({ text: text, evidence: slug }).strict()),
     ambitionWhy: text.optional(),
+    /** A footnote under the About columns, shown after an asterisk. */
+    note: text.optional(),
     story: z.array(z.object({ when: text, text: text, ref: slug.optional() }).strict()),
   })
   .strict();
@@ -135,6 +145,8 @@ export const profileSchema = z
     focus: z.array(text).min(1).optional(),
     /** Programming and markup languages, shown on the home page's lab pass. */
     languages: z.array(text).min(1).optional(),
+    /** Main tools and libraries, shown on the home page's lab pass. */
+    tools: z.array(text).min(1).optional(),
     location: text,
     email: z.email(),
     linkedin: httpsUrl,

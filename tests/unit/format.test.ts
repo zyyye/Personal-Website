@@ -7,7 +7,9 @@ import {
   joinAnd,
   joinOr,
   formatMonth,
+  formatPeriod,
   formatRange,
+  monthsInclusive,
   shortTitle,
 } from '../../src/lib/format.ts';
 
@@ -83,6 +85,20 @@ describe('joinOr', () => {
     expect(joinOr(['one', 'two'])).toBe('one or two');
     expect(joinOr(['one'])).toBe('one');
     expect(joinOr([])).toBe('');
+  });
+});
+
+describe('monthsInclusive and formatPeriod', () => {
+  it('counts both end months', () => {
+    expect(monthsInclusive('2026-05', '2026-08')).toBe(4);
+    expect(monthsInclusive('2025-11', '2026-02')).toBe(4);
+    expect(monthsInclusive('2026-05', '2026-05')).toBe(1);
+  });
+  it('adds the length only for internships with an end', () => {
+    expect(formatPeriod('internship', '2026-05', '2026-08')).toBe('May to Aug 2026 (4 months)');
+    expect(formatPeriod('internship', '2026-05', '2026-05')).toBe('May 2026 (1 month)');
+    expect(formatPeriod('team', '2026-01', '2026-04')).toBe('Jan to Apr 2026');
+    expect(formatPeriod('internship', '2026-05')).toBe('May 2026 to present');
   });
 });
 

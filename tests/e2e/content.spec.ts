@@ -44,7 +44,7 @@ test('DeepWeeds case study: results table, follow-up label and limitations', asy
   await expect(page.getByRole('heading', { name: 'Follow-up investigation' })).toBeVisible();
   await expect(
     page.getByRole('region', { name: 'Results', exact: true }).locator('tbody tr'),
-  ).toHaveCount(10);
+  ).toHaveCount(11);
   await expect(page.getByRole('heading', { name: 'Limitations' })).toBeVisible();
 });
 
@@ -55,7 +55,7 @@ test('LogicLens case study: v2 results with their reference rules, and limitatio
   await expect(page.getByRole('heading', { level: 1 })).toContainText('LogicLens');
   await expect(page.getByRole('heading', { name: 'How it evolved' })).toBeVisible();
   const rows = page.getByRole('region', { name: 'Results', exact: true }).locator('tbody tr');
-  await expect(rows).toHaveCount(6);
+  await expect(rows).toHaveCount(12);
   await expect(rows.filter({ hasText: 'Reference: rule that reads no text' })).toHaveCount(2);
   await expect(page.getByRole('heading', { name: 'Limitations' })).toBeVisible();
   await expect(

@@ -1,7 +1,7 @@
 ---
 title: 'LogicLens: multi-stage LLM fine-tuning for contradiction detection in long dialogues'
 summary: Fine-tuned Mistral-7B (QLoRA, LoRA, DoRA) in four stages to find contradictions in 950 to 1,500-turn dialogues. Built the data engine, training and evaluation.
-status: being-improved
+status: complete
 featured: true
 order: 1
 hidden: false
@@ -17,6 +17,16 @@ organisation:
 role: AI Research Project Intern. Designed and built the whole system end to end, from the synthetic data engine to custom training code, inference and evaluation, and presented it to senior management.
 tags: [llm, nlp, fine-tuning, evaluation]
 stack: [Python, PyTorch, Hugging Face Transformers, TRL, PEFT, bitsandbytes, Gemini API]
+skills:
+  - LLM fine-tuning
+  - QLoRA, LoRA and DoRA
+  - Synthetic data generation
+  - Prompt engineering
+  - Model evaluation
+  - Data pipelines
+  - Natural language processing (NLP)
+  - Natural language inference
+  - Data cleaning
 highlights:
   - title: 7B LLM on one T4 GPU
     detail: '4-bit QLoRA, LoRA, then DoRA; 43.3M trainable parameters'
@@ -26,6 +36,7 @@ highlights:
     detail: 'Extended TRL to weight the quoted evidence 2x'
   - title: Evaluation audit
     detail: 'Found a train/test leak and two benchmark shortcuts'
+resultsChart: grouped
 results:
   - label: Zero-shot Mistral-7B-Instruct
     value: '0.69'
@@ -40,6 +51,44 @@ results:
     n: 39 windows from 6 held-out dialogues
     note: A rule that reads no text also scores 1.00 on these windows (see Limitations).
     highlight: true
+  - label: Zero-shot Mistral-7B-Instruct
+    value: '0.82'
+    metric: precision
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    note: 'Positive class: windows with a contradiction (19 of 39).'
+    highlight: true
+  - label: Fine-tuned (v2)
+    value: '1.00'
+    metric: precision
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    note: 'Positive class: windows with a contradiction (19 of 39).'
+    highlight: true
+  - label: Zero-shot Mistral-7B-Instruct
+    value: '0.47'
+    metric: recall
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    highlight: true
+  - label: Fine-tuned (v2)
+    value: '1.00'
+    metric: recall
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    highlight: true
+  - label: Zero-shot Mistral-7B-Instruct
+    value: '0.60'
+    metric: F1
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    highlight: true
+  - label: Fine-tuned (v2)
+    value: '1.00'
+    metric: F1
+    level: window level
+    n: 39 windows from 6 held-out dialogues
+    highlight: true
   - label: 'Reference: rule that reads no text (window length)'
     value: '1.00'
     metric: accuracy
@@ -47,21 +96,21 @@ results:
     n: 39 windows from 6 held-out dialogues
   - label: Zero-shot Mistral-7B-Instruct
     value: '0.14'
-    metric: F1 on contradiction turns
+    metric: F1
     level: turn level
     n: 32 contradiction turns among 1,696 turn rows
     note: precision 0.12, recall 0.19
     highlight: true
   - label: Fine-tuned (v2)
     value: '0.35'
-    metric: F1 on contradiction turns
+    metric: F1
     level: turn level
     n: 32 contradiction turns among 1,696 turn rows
     note: precision 0.27, recall 0.50
     highlight: true
   - label: 'Reference: rule that reads no text (flag the turn 20 in from each edge)'
     value: '0.86'
-    metric: F1 on contradiction turns
+    metric: F1
     level: turn level
     n: 32 contradiction turns among 1,696 turn rows
 limitations:
@@ -123,4 +172,4 @@ Each version fixed something the previous one revealed.
 
 ## Status
 
-Version 2 splits the data by dialogue and adds a zero-shot baseline. The next step is a test without the shortcuts described under Limitations.
+The internship project is complete. Afterwards I rebuilt its evaluation as version 2, with a split by dialogue and a zero-shot baseline; a test without the shortcuts described under Limitations is the natural next step.

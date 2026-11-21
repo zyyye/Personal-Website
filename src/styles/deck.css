@@ -12,6 +12,12 @@
   scroll-snap-stop: always;
 }
 
+/* While deck.ts turns a page frame by frame, snapping and CSS smooth scrolling pause. */
+:root[data-scroll][data-turning] {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;
@@ -45,11 +51,14 @@
 }
 
 /* The title of each deck page: pixel face, short text only (plan section 3A). */
+:root {
+  --page-title-size: clamp(2rem, 4vw, 3rem);
+}
 .page-title {
   margin: 0 0 var(--space-3);
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: var(--page-title-size);
   line-height: 1.1;
 }
 

@@ -40,7 +40,41 @@ export const LIMITS = {
   storyMax: 5,
   storyWords: 10,
   ambitionWhyWords: 25,
+  noteWords: 50,
+  /** Grouped chart: at most this many level-and-metric groups, and series (bars per group). */
+  groupedMaxGroups: 6,
+  groupedMaxSeries: 3,
 } as const;
+
+/**
+ * A grouped chart compares the same series (row labels) on several metrics, so every group
+ * (level and metric) must have exactly one highlighted row per series.
+ */
+export function groupedChartErrors(
+  file: string,
+  rows: readonly { label: string; metric: string; level?: string | undefined }[],
+): string[] {
+  const errors: string[] = [];
+  const series = [...new Set(rows.map((r) => r.label))];
+  const groups = [...new Set(rows.map((r) => `${r.level ?? ''}|${r.metric}`))];
+  if (series.length < 2 || series.length > LIMITS.groupedMaxSeries) {
+    errors.push(
+      `${file}: a grouped chart needs 2 to ${LIMITS.groupedMaxSeries} series, found ${series.length}`,
+    );
+  }
+  if (groups.length > LIMITS.groupedMaxGroups) {
+    errors.push(
+      `${file}: a grouped chart has ${groups.length} groups (max ${LIMITS.groupedMaxGroups})`,
+    );
+  }
+  for (const g of groups) {
+    const labels = rows.filter((r) => `${r.level ?? ''}|${r.metric}` === g).map((r) => r.label);
+    if (labels.length !== series.length || new Set(labels).size !== series.length) {
+      errors.push(`${file}: grouped chart group "${g}" needs exactly one row per series`);
+    }
+  }
+  return errors;
+}
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const PLACEHOLDER = /\bTODO\b|\bTBD\b|\blorem\b/i;
@@ -96,16 +130,20 @@ export function runChecks(c: ContentSet): string[] {
       err(`${p.file}: has results but no evidence`);
     }
     const highlighted = (d.results ?? []).filter((r) => r.highlight);
-    if (highlighted.length > LIMITS.maxHighlightedResults) {
-      err(
-        `${p.file}: ${highlighted.length} highlighted results (max ${LIMITS.maxHighlightedResults})`,
-      );
-    }
-    const metrics = new Set(highlighted.map((r) => r.metric)).size;
-    if (metrics > LIMITS.maxHighlightedMetrics) {
-      err(
-        `${p.file}: highlighted results use ${metrics} metrics (max ${LIMITS.maxHighlightedMetrics}, one bar chart each)`,
-      );
+    if ((d.resultsChart ?? 'bars') === 'bars') {
+      if (highlighted.length > LIMITS.maxHighlightedResults) {
+        err(
+          `${p.file}: ${highlighted.length} highlighted results (max ${LIMITS.maxHighlightedResults})`,
+        );
+      }
+      const metrics = new Set(highlighted.map((r) => r.metric)).size;
+      if (metrics > LIMITS.maxHighlightedMetrics) {
+        err(
+          `${p.file}: highlighted results use ${metrics} metrics (max ${LIMITS.maxHighlightedMetrics}, one bar chart each)`,
+        );
+      }
+    } else {
+      errors.push(...groupedChartErrors(p.file, highlighted));
     }
     for (const r of highlighted) {
       const n = leadingNumber(r.value);
@@ -224,6 +262,10 @@ export function runChecks(c: ContentSet): string[] {
     });
     if (ambitionWhy && wordCount(ambitionWhy) > LIMITS.ambitionWhyWords) {
       err(`${file}: about.ambitionWhy is over ${LIMITS.ambitionWhyWords} words`);
+    }
+    const note = data.about.note;
+    if (note && wordCount(note) > LIMITS.noteWords) {
+      err(`${file}: about.note is over ${LIMITS.noteWords} words`);
     }
   }
 

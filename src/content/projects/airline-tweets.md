@@ -10,6 +10,15 @@ kind: team
 role: In a team of four (NUS IT1244 course project), I designed the end-to-end unsupervised pipeline, preprocessed the text, built the TF-IDF and SBERT representations, tuned dimensionality reduction and clustering, and compared transformer sentiment models.
 tags: [nlp, unsupervised-learning, clustering, transformers]
 stack: [Python, scikit-learn, Sentence-Transformers, Hugging Face Transformers, UMAP, HDBSCAN]
+skills:
+  - Natural language processing (NLP)
+  - Sentiment analysis
+  - Unsupervised learning and clustering
+  - TF-IDF
+  - SBERT sentence embeddings
+  - BERT language models
+  - PCA, t-SNE and UMAP
+  - Neural networks
 results:
   - label: 'Majority-class baseline (always "negative")'
     value: '0.26'

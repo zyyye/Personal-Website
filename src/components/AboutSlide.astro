@@ -65,6 +65,12 @@ const learningNow = (await learningEntries()).filter((l) => l.data.status === 'i
         </ol>
       </section>
     </div>
+    {about.note && (
+      <p class="about__note">
+        <span aria-hidden="true">* </span>
+        {about.note}
+      </p>
+    )}
   </div>
 </Slide>
 
@@ -72,6 +78,15 @@ const learningNow = (await learningEntries()).filter((l) => l.data.status === 'i
   .about__cols {
     display: grid;
     gap: var(--space-5);
+  }
+  /* A footnote row under the columns (Leo, 21 Nov 2026). */
+  .about__note {
+    max-width: 60rem;
+    margin: var(--space-5) 0 0;
+    padding-top: var(--space-3);
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    border-top: 2px solid var(--color-border);
   }
   @media (min-width: 56rem) {
     .about__cols {

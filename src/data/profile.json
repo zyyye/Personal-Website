@@ -2,8 +2,16 @@
   "name": "Yeo Zhi Yuan",
   "greeting": "Hi, I'm",
   "headline": "Data science and AI student at NUS. I fine-tune LLMs, build NLP and computer-vision pipelines, and find out why models fail. Now learning to build AI agents.",
-  "focus": ["NLP", "Computer vision", "LLM fine-tuning", "Agentic AI", "Model evaluation"],
-  "languages": ["Python", "Java", "C++", "HTML"],
+  "focus": [
+    "NLP",
+    "Computer vision",
+    "LLM fine-tuning",
+    "Agentic AI",
+    "AI-assisted engineering",
+    "Model evaluation"
+  ],
+  "languages": ["Python", "Java", "C++", "R", "SQL", "HTML"],
+  "tools": ["PyTorch", "Hugging Face", "pandas", "NumPy", "Plotly", "Tableau", "Git"],
   "location": "Singapore. On exchange at Tsinghua University, Beijing, until Jan 2027.",
   "email": "yeozy2018@gmail.com",
   "linkedin": "https://www.linkedin.com/in/yeo-zhi-yuan",
@@ -72,6 +80,7 @@
         "when": "Sep 2026",
         "text": "Exchange at Tsinghua University (computer vision)"
       }
-    ]
+    ],
+    "note": "This site was built through agentic coding. I broke the project into small, testable problems, directed Claude, an AI coding agent, to engineer the structure and code, and reviewed what it wrote against automated tests and my own checks instead of trusting it blindly."
   }
 }

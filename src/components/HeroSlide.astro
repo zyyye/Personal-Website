@@ -2,7 +2,7 @@
 // Home page (ID-card layout, chosen by Leo from the design lab, 19 Nov 2026): the name is the one
 // bold element; the lab pass beside it puts the key facts on the first screen.
 import { education, profile } from '../lib/data.ts';
-import { formatAvailabilityShort, formatMonth, joinAnd, joinOr } from '../lib/format.ts';
+import { formatAvailabilityShort, joinAnd, joinOr } from '../lib/format.ts';
 import type { DeckPage } from '../lib/pages.ts';
 import Slide from './Slide.astro';
 
@@ -18,10 +18,10 @@ if (!uni) throw new Error('education.json needs at least one entry');
 const facts = [
   { term: 'Studying', value: `${uni.credential}, ${uni.shortName ?? uni.institution}` },
   ...(uni.minor ? [{ term: 'Minor', value: uni.minor }] : []),
-  ...(uni.gpa && uni.gpaAsOf
-    ? [{ term: 'GPA', value: `${uni.gpa} (as of ${formatMonth(uni.gpaAsOf)})` }]
-    : []),
+  // No "as of" month on the card (Leo, 21 Nov 2026); gpaAsOf stays in the data.
+  ...(uni.gpa ? [{ term: 'GPA', value: uni.gpa }] : []),
   ...(profile.languages ? [{ term: 'Languages', value: joinAnd(profile.languages) }] : []),
+  ...(profile.tools ? [{ term: 'Tools', value: joinAnd(profile.tools) }] : []),
   { term: 'Aiming for', value: `${joinOr(profile.targetRoles)} roles` },
   { term: 'Available', value: joinOr(profile.availability.map(formatAvailabilityShort)) },
   { term: 'Based in', value: profile.location },
@@ -189,11 +189,13 @@ const facts = [
     margin: var(--space-5) 0 0;
   }
 
+  /* The gap between the photo row and the facts matches the side padding, so the photo has the
+     same space beside it and below it (Leo, 21 Nov 2026). */
   .badge {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: 1.75rem;
     margin: var(--px);
     padding: 2.5rem 1.75rem 1.75rem;
     background: var(--color-surface);
@@ -208,14 +210,11 @@ const facts = [
     background: var(--color-accent-2);
     box-shadow: inset 0 0 0 var(--px) var(--color-bg);
   }
-  /* The text sits low and well clear of the photo (Leo, 21 Nov 2026). */
+  /* The text is centred on the photo and well clear of it (Leo, 21 Nov 2026). */
   .badge__head {
     display: flex;
     gap: var(--space-4);
-    align-items: flex-end;
-  }
-  .badge__head > div {
-    padding-bottom: var(--space-3);
+    align-items: center;
   }
   @media (min-width: 30rem) {
     .badge__head {
@@ -245,7 +244,7 @@ const facts = [
   }
   .badge__facts {
     display: grid;
-    grid-template-columns: 6.5rem minmax(0, 1fr);
+    grid-template-columns: 5.75rem minmax(0, 1fr);
     gap: var(--space-2) var(--space-3);
     margin: 0;
     font-size: 0.9375rem;
