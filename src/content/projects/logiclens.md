@@ -9,30 +9,37 @@ period: { start: '2026-05', end: '2026-08' }
 kind: internship
 organisation:
   name: Central Narcotics Bureau (CNB)
+  logo:
+    src: /images/internship-logo.png
+    alt: Central Narcotics Bureau logo
+    width: 288
+    height: 288
 role: AI Research Project Intern. Designed and built the whole system end to end, from the synthetic data engine to custom training code, inference and evaluation, and presented it to senior management.
 tags: [llm, nlp, fine-tuning, evaluation]
 stack: [Python, PyTorch, Hugging Face Transformers, TRL, PEFT, bitsandbytes, Gemini API]
 highlights:
   - title: 7B LLM on one T4 GPU
-    detail: '4-bit QLoRA, LoRA, then DoRA: 43.3M trainable parameters (0.59%)'
+    detail: '4-bit QLoRA, LoRA, then DoRA; 43.3M trainable parameters'
   - title: Synthetic data engine
-    detail: '45 dialogues of 950 to 1,500 turns, fault-tolerant across 12 API keys'
+    detail: '45 dialogues of up to 1,500 turns; a 12-key API pipeline'
   - title: Custom weighted loss
-    detail: 'Extended TRL: 2x weight on the quoted evidence, checked span by span'
+    detail: 'Extended TRL to weight the quoted evidence 2x'
   - title: Evaluation audit
-    detail: 'Found a train/test leak and two shortcuts; turn-level F1 0.14 to 0.35'
+    detail: 'Found a train/test leak and two benchmark shortcuts'
 results:
   - label: Zero-shot Mistral-7B-Instruct
     value: '0.69'
     metric: accuracy
     level: window level
     n: 39 windows from 6 held-out dialogues
+    highlight: true
   - label: Fine-tuned (v2)
     value: '1.00'
     metric: accuracy
     level: window level
     n: 39 windows from 6 held-out dialogues
     note: A rule that reads no text also scores 1.00 on these windows (see Limitations).
+    highlight: true
   - label: 'Reference: rule that reads no text (window length)'
     value: '1.00'
     metric: accuracy
@@ -44,12 +51,14 @@ results:
     level: turn level
     n: 32 contradiction turns among 1,696 turn rows
     note: precision 0.12, recall 0.19
+    highlight: true
   - label: Fine-tuned (v2)
     value: '0.35'
     metric: F1 on contradiction turns
     level: turn level
     n: 32 contradiction turns among 1,696 turn rows
     note: precision 0.27, recall 0.50
+    highlight: true
   - label: 'Reference: rule that reads no text (flag the turn 20 in from each edge)'
     value: '0.86'
     metric: F1 on contradiction turns

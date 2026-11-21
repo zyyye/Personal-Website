@@ -99,3 +99,10 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 - **New project page: Tweet Sentiment** (Airline Tweets NLP on LinkedIn and the CV). Facts come from Leo's LinkedIn entry and the IT1244 report attached to it. Macro-F1 is the headline metric because 63% of the tweets are negative; it is the mean of the report's rounded per-class F1 scores. The majority-class baseline uses the public dataset's class counts (9,178 negative of 14,640). Teammates stay unnamed (plan section 10, open item 3).
 - **Writing style:** each case study now opens with outcome-first "At a glance" bullets, then "How it evolved", which explains each change and why it was made. Numbers are unchanged from the sources.
 - The results table shows "± is the standard deviation across seeds" only when a value contains ±, and its header cells no longer wrap.
+
+## 2026-11-21: Deck polish (decided by Leo)
+
+- **Lab pass:** the label, name and status beside the photo sit lower (bottom-aligned with a small inset) and further from the photo (2.5rem gap from 30rem up).
+- **Taskbar counts:** the Internship, Projects and Achievements keys show how many pages they hold, e.g. "Projects (2)". Home, About and Contact are single pages and show none. The count sits inside the label, so it hides with the label on narrow screens but stays in the key's accessible name.
+- **LogicLens results on the deck page:** the zero-shot and fine-tuned rows are highlighted, so the internship page shows two bar charts: window accuracy (0.69 against 1.00) and F1 on contradiction turns (0.14 against 0.35). The reference rules stay in the case-study table. Highlighted results may now use up to two metrics, with one chart each (`LIMITS.maxHighlightedMetrics`). Every project page with charts links to its case study's Limitations section. The tile details were shortened so the page still fits 1280 by 800.
+- **CNB logo:** Leo supplied the official logo (white background). It was cropped to its content, resized to 288 px and reduced to a 64-colour palette (22 KB) as `public/images/internship-logo.png`. It sits beside the page title on a white plate.

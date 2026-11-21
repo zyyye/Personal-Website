@@ -1,7 +1,7 @@
 ---
 // One project or internship page in the deck. The side panel shows, in this order and only if the
-// content has it: a bar chart of the highlighted results, the highlight tiles, and the
-// "results withheld" note for work whose evaluation is being redone.
+// content has it: a bar chart per metric of the highlighted results with a link to the caveats,
+// the highlight tiles, and the "results withheld" note for work whose evaluation is being redone.
 import type { CollectionEntry } from 'astro:content';
 import { capitalise, formatRange, KIND_LABEL, shortTitle } from '../lib/format.ts';
 import { leadingNumber, type DeckPage } from '../lib/pages.ts';
@@ -17,42 +17,51 @@ const d = project.data;
 const titleId = `${project.id}-title`;
 
 const highlighted = (d.results ?? []).filter((r) => r.highlight);
-// The content check guarantees these share one metric and sit between 0 and 1.
-const bars = highlighted.map((r) => ({
-  label: r.seeds && r.seeds > 1 ? `${r.label} (${r.seeds} seeds)` : r.label,
-  value: r.value,
-  width: `${((leadingNumber(r.value) ?? 0) * 100).toFixed(1)}%`,
-}));
-const first = highlighted[0];
-const chartCaption = first ? `${capitalise(first.metric)}, ${first.n}` : '';
+// One chart per metric, in the order the metrics first appear, so the bars in a chart compare.
+// The content check caps the number of metrics and keeps every value between 0 and 1.
+const charts = [...new Set(highlighted.map((r) => r.metric))].map((metric) => {
+  const rows = highlighted.filter((r) => r.metric === metric);
+  return {
+    caption: `${capitalise(metric)}, ${rows[0]?.n ?? ''}`,
+    bars: rows.map((r) => ({
+      label: r.seeds && r.seeds > 1 ? `${r.label} (${r.seeds} seeds)` : r.label,
+      value: r.value,
+      width: `${((leadingNumber(r.value) ?? 0) * 100).toFixed(1)}%`,
+    })),
+  };
+});
 const withheld = !d.results && d.status === 'being-improved';
 ---
 
 <Slide page={page} labelledby={titleId}>
   <div class="project">
     <div class="project__text">
-      {d.organisation?.logo && (
-        <p class="org-logo">
-          <img
-            src={d.organisation.logo.src}
-            alt={d.organisation.logo.alt}
-            width={d.organisation.logo.width}
-            height={d.organisation.logo.height}
-            decoding="async"
-          />
-        </p>
-      )}
-      <h2 id={titleId} class="page-title">
-        {shortTitle(d.title)}
-      </h2>
-      <p class="project__meta">
-        <StatusBadge status={d.status} />
-        <span>
-          {KIND_LABEL[d.kind]}
-          {d.organisation && ` at ${d.organisation.name}`},{' '}
-          {formatRange(d.period.start, d.period.end)}
-        </span>
-      </p>
+      <div class="project__head">
+        {d.organisation?.logo && (
+          <p class="org-logo">
+            <img
+              src={d.organisation.logo.src}
+              alt={d.organisation.logo.alt}
+              width={d.organisation.logo.width}
+              height={d.organisation.logo.height}
+              decoding="async"
+            />
+          </p>
+        )}
+        <div>
+          <h2 id={titleId} class="page-title">
+            {shortTitle(d.title)}
+          </h2>
+          <p class="project__meta">
+            <StatusBadge status={d.status} />
+            <span>
+              {KIND_LABEL[d.kind]}
+              {d.organisation && ` at ${d.organisation.name}`},{' '}
+              {formatRange(d.period.start, d.period.end)}
+            </span>
+          </p>
+        </div>
+      </div>
       <p class="project__summary">{d.summary}</p>
       <h3>My role</h3>
       <p>{d.role}</p>
@@ -69,11 +78,11 @@ const withheld = !d.results && d.status === 'being-improved';
     </div>
 
     <div class="project__side">
-      {bars.length > 0 && (
+      {charts.map((c) => (
         <figure class="bars">
-          <figcaption>{chartCaption}</figcaption>
+          <figcaption>{c.caption}</figcaption>
           <ul>
-            {bars.map((b) => (
+            {c.bars.map((b) => (
               <li>
                 <span class="bars__label">{b.label}</span>
                 <span class="bars__value">{b.value}</span>
@@ -84,6 +93,11 @@ const withheld = !d.results && d.status === 'being-improved';
             ))}
           </ul>
         </figure>
+      ))}
+      {charts.length > 0 && d.limitations.length > 0 && (
+        <p class="caveats">
+          <a href={`/projects/${project.id}/#limitations`}>Caveats and limitations</a>
+        </p>
       )}
       {d.highlights && (
         <ol class="tiles">
@@ -117,18 +131,38 @@ const withheld = !d.results && d.status === 'being-improved';
       gap: 4rem;
     }
   }
-  /* A light plate, so a logo drawn for a white page stays legible on the dark theme. */
+  /* The employer's logo sits beside the title, on a light plate so a logo drawn for a white
+     page stays legible on the dark theme. */
+  .project__head {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+  }
   .org-logo {
-    display: inline-block;
-    margin: 0 0 var(--space-3);
-    padding: var(--space-2) var(--space-3);
+    flex: none;
+    margin: 0;
+    padding: var(--space-1);
     background: var(--color-accent-2);
     box-shadow: 0 0 0 2px var(--color-border);
   }
   .org-logo img {
     display: block;
     width: auto;
-    height: 3rem;
+    height: 4.5rem;
+  }
+  @media (max-width: 30rem) {
+    .org-logo img {
+      height: 3.5rem;
+    }
+  }
+  .project__side {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+  .caveats {
+    margin: calc(-1 * var(--space-2)) 0 0;
+    font-size: 0.9375rem;
   }
   .project__meta {
     display: flex;

@@ -43,9 +43,9 @@ test('home serves one page per item and one taskbar key per group', async ({ pag
   expect(await tabs.allInnerTexts()).toEqual([
     'Home',
     'About',
-    'Internship',
-    'Projects',
-    'Achievements',
+    'Internship (1)',
+    'Projects (2)',
+    'Achievements (3)',
     'Contact',
   ]);
 });

@@ -20,6 +20,10 @@ interface Props {
 }
 const { variant = 'deck', groups = [], current } = Astro.props;
 
+// Groups that collect items show how many pages they hold, e.g. "Projects (3)" (Leo, 21 Nov 2026).
+// Home, About and Contact are single fixed pages, so a count would add nothing.
+const COUNTED_GROUPS = new Set<DeckGroup['id']>(['internship', 'projects', 'achievements']);
+
 const pageLinks = [
   { href: '/', label: 'Home', icon: GROUP_ICONS.home },
   { href: '/projects/', label: 'Projects', icon: GROUP_ICONS.projects },
@@ -37,7 +41,10 @@ const pageLinks = [
           <li>
             <a class="key" href={`#${g.firstPageId}`} data-slide-link data-group-link={g.id}>
               <PixelIcon grid={GROUP_ICONS[g.id]} />
-              <span class="key__label">{g.label}</span>
+              <span class="key__label">
+                {g.label}
+                {COUNTED_GROUPS.has(g.id) && <span class="key__count"> ({g.size})</span>}
+              </span>
             </a>
           </li>
         ))
@@ -142,8 +149,12 @@ const pageLinks = [
     color: #6b6b6b;
     cursor: not-allowed;
   }
-  .key__state {
+  .key__state,
+  .key__count {
     color: var(--color-text-muted);
+  }
+  .key[aria-current] .key__count {
+    color: var(--color-accent);
   }
   .key--mode[aria-pressed='true'] .key__state {
     color: var(--color-accent);

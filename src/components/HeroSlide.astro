@@ -208,10 +208,19 @@ const facts = [
     background: var(--color-accent-2);
     box-shadow: inset 0 0 0 var(--px) var(--color-bg);
   }
+  /* The text sits low and well clear of the photo (Leo, 21 Nov 2026). */
   .badge__head {
     display: flex;
-    gap: var(--space-3);
-    align-items: center;
+    gap: var(--space-4);
+    align-items: flex-end;
+  }
+  .badge__head > div {
+    padding-bottom: var(--space-3);
+  }
+  @media (min-width: 30rem) {
+    .badge__head {
+      gap: var(--space-5);
+    }
   }
   .badge__head img {
     width: 7.5rem;

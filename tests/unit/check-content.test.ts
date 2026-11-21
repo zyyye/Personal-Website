@@ -119,7 +119,7 @@ describe('highlighted results (the bar chart)', () => {
     );
     expect(problems(root).some((p) => /needs a value between 0 and 1/.test(p))).toBe(true);
   });
-  it('highlighted results on different metrics fail', () => {
+  it('highlighted results on two metrics pass (one chart each)', () => {
     const root = copyFixture();
     editFile(
       root,
@@ -127,7 +127,17 @@ describe('highlighted results (the bar chart)', () => {
       "  - { label: Example accuracy, value: '0.90', metric: test accuracy, n: 100 test items }",
       "  - { label: Example accuracy, value: '0.90', metric: test accuracy, n: 100 test items, highlight: true }\n  - { label: Example F1, value: '0.80', metric: test macro-F1, n: 100 test items, highlight: true }",
     );
-    expect(problems(root).some((p) => /share one metric/.test(p))).toBe(true);
+    expect(problems(root)).toEqual([]);
+  });
+  it('highlighted results on three metrics fail', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      PROJECT,
+      "  - { label: Example accuracy, value: '0.90', metric: test accuracy, n: 100 test items }",
+      "  - { label: Example accuracy, value: '0.90', metric: test accuracy, n: 100 test items, highlight: true }\n  - { label: Example F1, value: '0.80', metric: test macro-F1, n: 100 test items, highlight: true }\n  - { label: Example recall, value: '0.70', metric: test recall, n: 100 test items, highlight: true }",
+    );
+    expect(problems(root).some((p) => /use 3 metrics \(max 2/.test(p))).toBe(true);
   });
 });
 

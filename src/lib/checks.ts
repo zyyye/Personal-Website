@@ -31,6 +31,8 @@ export interface ContentSet {
 export const LIMITS = {
   maxFeatured: 3,
   maxHighlightedResults: 6,
+  /** Each metric gets its own bar chart on the deck page; more than two would not fit. */
+  maxHighlightedMetrics: 2,
   talentMin: 3,
   talentMax: 4,
   talentWords: 16,
@@ -99,8 +101,11 @@ export function runChecks(c: ContentSet): string[] {
         `${p.file}: ${highlighted.length} highlighted results (max ${LIMITS.maxHighlightedResults})`,
       );
     }
-    if (new Set(highlighted.map((r) => r.metric)).size > 1) {
-      err(`${p.file}: highlighted results must share one metric, so their bars compare`);
+    const metrics = new Set(highlighted.map((r) => r.metric)).size;
+    if (metrics > LIMITS.maxHighlightedMetrics) {
+      err(
+        `${p.file}: highlighted results use ${metrics} metrics (max ${LIMITS.maxHighlightedMetrics}, one bar chart each)`,
+      );
     }
     for (const r of highlighted) {
       const n = leadingNumber(r.value);
