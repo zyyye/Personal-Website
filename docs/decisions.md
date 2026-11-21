@@ -139,3 +139,11 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 - **Flow:** a project without results may show `flow` (3 to 6 steps) in place of the chart. The content check rejects a project that has both a flow and highlighted results.
 - **Not used:** the repository's chart thumbnails (Matplotlib's gallery images) and its GIF (a stock background).
 - **Orbital certificate entry:** gains the credential link, a link to the project, and a summary taken from the credential page.
+
+## 2026-11-21 (late night): Orbital certificate image (decided by Leo)
+
+- The Orbital achievement page shows the certificate to the right of the text. It runs from the top of the title's letters to the bottom of the buttons. On narrow screens it sits below the text.
+- **Image source:** captured from Leo's NUS credential page as the page draws it: a template image with text over it. There is no single image file to download. Cropped to the certificate (728 × 1003 px) and saved as `public/images/orbital-certificate.webp` (38 KB).
+- **Code changes:**
+  - Learning entries gain an optional `image`. It uses the same picture shape as the employer logo (`pictureSchema`), and the content check requires the file to exist.
+  - `logo-fit.ts` became `fit-height.ts`, with `data-fit-height`, `data-fit-height-text` and `--fit-height`. It now sizes both the employer logo and the certificate.

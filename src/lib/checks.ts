@@ -186,6 +186,10 @@ export function runChecks(c: ContentSet): string[] {
     if (rel && !visibleProjectIds.has(rel)) {
       err(`${l.file}: relatedProject "${rel}" is not a visible project`);
     }
+    const image = l.data.image;
+    if (image && !c.publicFileExists(image.src)) {
+      err(`${l.file}: image.src "${image.src}" does not exist in public/`);
+    }
   }
 
   // --- Replays ---

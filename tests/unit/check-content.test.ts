@@ -192,6 +192,16 @@ describe('replay integrity', () => {
     );
     expectProblem(root, /organisation\.logo\.src "\/images\/missing-logo\.png" does not exist/);
   });
+  it('an achievement image that is not in public/ fails', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      'src/content/learning/sample-course.md',
+      'relatedProject: sample-project\n',
+      'relatedProject: sample-project\nimage: { src: /images/missing-cert.webp, alt: Example certificate, width: 70, height: 100 }\n',
+    );
+    expectProblem(root, /image\.src "\/images\/missing-cert\.webp" does not exist/);
+  });
   it('a flow next to highlighted results fails', () => {
     const root = copyFixture();
     editFile(

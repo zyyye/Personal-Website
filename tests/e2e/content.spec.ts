@@ -96,6 +96,30 @@ test('POLLUX: pipeline on the deck page, code and certificate links, teammate un
   expect(html).not.toContain('streamlit.app');
 });
 
+test('Orbital certificate sits beside the text, from the title letters to the buttons', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'side by side on wide screens only');
+  await page.goto('/#orbital-gemini');
+  const slide = page.locator('#orbital-gemini');
+  await expect(slide.locator('.achievement__image img')).toBeVisible();
+  const m = await slide.evaluate((s) => {
+    const title = s.querySelector('.page-title')!;
+    const t = title.getBoundingClientRect();
+    const inset = 0.31 * parseFloat(getComputedStyle(title).fontSize);
+    const button = s.querySelector('.achievement__links a')!.getBoundingClientRect();
+    const img = s.querySelector('.achievement__image img')!.getBoundingClientRect();
+    return {
+      top: img.top - (t.top + inset),
+      bottom: img.bottom - button.bottom,
+      side: img.left - t.right,
+    };
+  });
+  expect(Math.abs(m.top)).toBeLessThanOrEqual(2);
+  expect(Math.abs(m.bottom)).toBeLessThanOrEqual(2);
+  expect(m.side).toBeGreaterThan(0);
+});
+
 // Terms from plan section 8.2 that must not appear anywhere in the built site.
 const OFF_SITE =
   /\b(interrogat\w*|suspects?|narcotics?|drugs?|deception|declassified|redact\w*|dealers?|mules?|singlish|cnb|htx)\b/i;

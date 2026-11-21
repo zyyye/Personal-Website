@@ -13,32 +13,49 @@ interface Props {
 const { page, entry } = Astro.props;
 const d = entry.data;
 const titleId = `${entry.id}-title`;
+const image = d.image;
 const kind = d.kind === 'certificate' ? 'Certificate' : 'Course';
 const when =
   d.status === 'in-progress' ? 'in progress' : d.date ? formatMonth(d.date) : 'completed';
 ---
 
 <Slide page={page} labelledby={titleId}>
-  <div class="achievement">
-    <h2 id={titleId} class="page-title">
-      {d.title}
-    </h2>
-    <p class="achievement__meta">
-      {kind}, {d.provider}, {when}
-    </p>
-    {d.summary && <p class="achievement__summary">{d.summary}</p>}
-    {(d.credentialUrl || d.relatedProject) && (
-      <p class="achievement__links">
-        {d.credentialUrl && (
-          <a class="pixel-button" href={d.credentialUrl}>
-            View the credential
-          </a>
-        )}
-        {d.relatedProject && (
-          <a class="pixel-button pixel-button--quiet" href={`#${d.relatedProject}`}>
-            See the project
-          </a>
-        )}
+  <div
+    class:list={['achievement', image && 'achievement--image']}
+    data-fit-height={image ? '' : undefined}
+  >
+    <div class="achievement__text" data-fit-height-text>
+      <h2 id={titleId} class="page-title">
+        {d.title}
+      </h2>
+      <p class="achievement__meta">
+        {kind}, {d.provider}, {when}
+      </p>
+      {d.summary && <p class="achievement__summary">{d.summary}</p>}
+      {(d.credentialUrl || d.relatedProject) && (
+        <p class="achievement__links">
+          {d.credentialUrl && (
+            <a class="pixel-button" href={d.credentialUrl}>
+              View the credential
+            </a>
+          )}
+          {d.relatedProject && (
+            <a class="pixel-button pixel-button--quiet" href={`#${d.relatedProject}`}>
+              See the project
+            </a>
+          )}
+        </p>
+      )}
+    </div>
+    {image && (
+      <p class="achievement__image">
+        <img
+          src={image.src}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          decoding="async"
+        />
       </p>
     )}
   </div>
@@ -62,5 +79,44 @@ const when =
     flex-wrap: wrap;
     gap: var(--space-3);
     margin: var(--space-4) 0 0;
+  }
+
+  /* With a certificate image: on wide screens it sits to the right of the text, from the top of
+     the title's letters to the bottom of the buttons (Leo, 21 Nov 2026). src/scripts/fit-height.ts
+     sets --fit-height from the text block; the default fits a typical block. Narrow screens show it
+     below the text. */
+  .achievement--image {
+    display: grid;
+    gap: var(--space-5);
+    max-width: none;
+  }
+  .achievement__text {
+    max-width: 52rem;
+  }
+  .achievement__image {
+    margin: 0;
+  }
+  .achievement__image img {
+    display: block;
+    width: min(100%, 20rem);
+    height: auto;
+    box-shadow: 0 0 0 2px var(--color-border);
+  }
+  @media (min-width: 64rem) {
+    .achievement--image {
+      /* The title's letters start 0.31em below its line box (Silkscreen, measured). */
+      --title-inset: calc(0.31 * var(--page-title-size));
+      grid-template-columns: minmax(0, 52rem) auto;
+      column-gap: 4rem;
+      align-items: start;
+    }
+    .achievement__image {
+      height: calc(var(--fit-height, 24rem) - var(--title-inset));
+      margin-top: var(--title-inset);
+    }
+    .achievement__image img {
+      width: auto;
+      height: 100%;
+    }
   }
 </style>

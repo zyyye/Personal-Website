@@ -71,7 +71,7 @@ const withheld = !d.results && d.status === 'being-improved';
     <div class="project__text">
       <div
         class:list={['project__head', logo && 'project__head--logo']}
-        data-logo-fit={logo ? '' : undefined}
+        data-fit-height={logo ? '' : undefined}
       >
         {logo && (
           <p class="org-logo">
@@ -84,7 +84,7 @@ const withheld = !d.results && d.status === 'being-improved';
             />
           </p>
         )}
-        <div class="project__titles" data-logo-fit-text>
+        <div class="project__titles" data-fit-height-text>
           <h2 id={titleId} class="page-title">
             {shortTitle(d.title)}
           </h2>
@@ -226,13 +226,13 @@ const withheld = !d.results && d.status === 'being-improved';
   }
 
   /* With a logo, the logo is a square as tall as the title block beside it: it starts at the title
-     and ends with the meta line (Leo, 21 Nov 2026). src/scripts/logo-fit.ts sets --logo-size from
+     and ends with the meta line (Leo, 21 Nov 2026). src/scripts/fit-height.ts sets --fit-height from
      the block's height; the default fits a three-line block. On narrow screens it is capped. */
   .project__head--logo {
     /* The title's letters start 0.31em below its line box (Silkscreen at line-height 1.1,
        measured), so the logo starts there too. */
     --title-inset: calc(0.31 * var(--page-title-size));
-    --logo-box: min(calc(var(--logo-size, 8rem) - var(--title-inset)), 30vw);
+    --logo-box: min(calc(var(--fit-height, 8rem) - var(--title-inset)), 30vw);
     display: grid;
     grid-template-columns: var(--logo-box) minmax(0, 1fr);
     column-gap: var(--space-4);

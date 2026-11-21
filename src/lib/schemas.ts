@@ -31,6 +31,16 @@ export const resultSchema = z
   })
   .strict();
 
+/** A picture stored in public/, with its pixel size so the page reserves the space. */
+export const pictureSchema = z
+  .object({
+    src: z.string().regex(/^\/[\w./-]+\.(png|svg|webp|jpg)$/),
+    alt: text,
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+  })
+  .strict();
+
 export const demoSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('replay'), dataFile: text, note: text }).strict(),
   z.object({ kind: z.literal('video'), video: httpsUrl, note: text }).strict(),
@@ -84,15 +94,7 @@ export const projectSchema = z
     organisation: z
       .object({
         name: text,
-        logo: z
-          .object({
-            src: z.string().regex(/^\/[\w./-]+\.(png|svg|webp|jpg)$/),
-            alt: text,
-            width: z.number().int().positive(),
-            height: z.number().int().positive(),
-          })
-          .strict()
-          .optional(),
+        logo: pictureSchema.optional(),
       })
       .strict()
       .optional(),
@@ -130,6 +132,8 @@ export const learningSchema = z
     date: yearMonth.optional(),
     credentialUrl: httpsUrl.optional(),
     relatedProject: slug.optional(),
+    /** The certificate itself, shown beside the text on the achievement's deck page. */
+    image: pictureSchema.optional(),
     /** Two or three lines in Leo's own words on what it covered and what he built. */
     summary: text.optional(),
   })
