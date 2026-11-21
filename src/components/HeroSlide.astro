@@ -35,7 +35,11 @@ const facts = [
       <h1 id="hero-title" class="hero__name" data-name>
         {profile.name}
       </h1>
-      <p class="hero__headline">{profile.headline}</p>
+      <p class="hero__headline">
+        {profile.headline.map((line) => (
+          <span>{line} </span>
+        ))}
+      </p>
       {profile.focus && (
         <ul class="hero__focus" aria-label="What I work on">
           {profile.focus.map((f) => (
@@ -165,6 +169,10 @@ const facts = [
     max-width: 32rem;
     margin: 0;
     font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  }
+  /* Each sentence starts on its own line. The trailing space keeps the sentences apart in copied text. */
+  .hero__headline span {
+    display: block;
   }
   .hero__focus {
     display: flex;

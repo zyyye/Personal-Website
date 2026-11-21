@@ -192,6 +192,16 @@ describe('replay integrity', () => {
     );
     expectProblem(root, /organisation\.logo\.src "\/images\/missing-logo\.png" does not exist/);
   });
+  it('a deck skill that is not in skills fails', () => {
+    const root = copyFixture();
+    editFile(
+      root,
+      PROJECT,
+      'tags: [testing]\n',
+      'tags: [testing]\nskills: [Testing]\ndeckSkills: [Debugging]\n',
+    );
+    expectProblem(root, /deckSkills "Debugging" is not in skills/);
+  });
 });
 
 describe('profile and About slide (section 8.7)', () => {

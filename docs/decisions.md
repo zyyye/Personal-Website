@@ -116,3 +116,8 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 - **Skills:** projects gained an optional `skills` list (LinkedIn skill names where they apply), shown with the stack as chips in the case-study header. Stack chips on the deck pages are bolder, with a white frame.
 - **Page turns:** the step keys, and in deck mode the mouse wheel, paging keys and links to a page, use one eased animation of 650 ms. The browser's own smooth scroll took about 450 ms in Chromium, measured. This replaces plan 3B rule 5 at Leo's request. It works only in deck mode, never on touch, never with modifier keys or while typing, and is instant with reduced motion. A wheel gesture turns one page; following events are absorbed until the stream goes quiet for 160 ms.
 - **About:** an asterisked note under the columns says the site was built through agentic coding and that Leo reviewed the code (`about.note`, at most 50 words).
+
+## 2026-11-21 (evening): Skills on deck pages and a three-line headline (decided by Leo)
+
+- **Deck skills:** a project may list `deckSkills`, a few of its `skills` shown on its deck page before the stack chips, in the same style. The content check requires each one to be in `skills`. Leo chose six for DeepWeeds (computer vision; transfer learning; CNNs and vision transformers; ablation studies; statistical analysis with bootstrap confidence intervals; data annotation) and two for LogicLens (synthetic data generation; prompt engineering).
+- **Headline:** `headline` is now a list of sentences, each starting on its own line on the home page. The page description joins them with spaces.

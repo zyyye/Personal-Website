@@ -1,7 +1,7 @@
 {
   "name": "Example Person",
   "greeting": "Hi, I'm",
-  "headline": "Example headline.",
+  "headline": ["Example headline."],
   "location": "Example city",
   "email": "person@example.com",
   "linkedin": "https://www.linkedin.com/in/example",

@@ -1,6 +1,7 @@
 ---
 // One project or internship page in the deck.
-// Left: the title block (with the employer's logo when there is one), summary, role, stack and
+// Left: the title block (with the employer's logo when there is one), summary, role, chosen skills
+// (deckSkills) and stack, and
 // the case-study link. Right: the highlighted results, drawn as one bar chart per metric, or as one
 // grouped chart that compares the same series on several metrics (resultsChart: grouped), with a
 // link to the caveats; or the "results withheld" note. Highlight tiles run along the bottom.
@@ -98,8 +99,8 @@ const withheld = !d.results && d.status === 'being-improved';
       <p class="project__summary">{d.summary}</p>
       <h3>My role</h3>
       <p>{d.role}</p>
-      <ul class="tags" aria-label="Stack">
-        {d.stack.map((s) => (
+      <ul class="tags" aria-label="Skills and tools">
+        {[...(d.deckSkills ?? []), ...d.stack].map((s) => (
           <li>{s}</li>
         ))}
       </ul>
@@ -257,7 +258,7 @@ const withheld = !d.results && d.status === 'being-improved';
     max-width: 40rem;
   }
 
-  /* Stack chips: white frame and bold text, so the tools read at a glance (Leo, 21 Nov 2026).
+  /* Skill and stack chips: white frame and bold text, so they read at a glance (Leo, 21 Nov 2026).
      White, not mint: mint means clickable. */
   .tags {
     display: flex;

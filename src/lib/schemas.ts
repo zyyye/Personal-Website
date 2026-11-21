@@ -60,6 +60,8 @@ export const projectSchema = z
     stack: z.array(text),
     /** Skills the project shows (named as on LinkedIn where they appear there): case-study chips. */
     skills: z.array(text).min(1).optional(),
+    /** The few skills also shown on the project's deck page, before the stack. Each must be in `skills`. */
+    deckSkills: z.array(text).min(1).optional(),
     links: z
       .object({
         code: httpsUrl.optional(),
@@ -140,7 +142,8 @@ export const profileSchema = z
   .object({
     name: text,
     greeting: text,
-    headline: text,
+    /** One sentence per line on the home page (Leo, 21 Nov 2026); joined with spaces elsewhere. */
+    headline: z.array(text).min(1),
     /** Areas of work shown as chips under the headline on the home page. */
     focus: z.array(text).min(1).optional(),
     /** Programming and markup languages, shown on the home page's lab pass. */

@@ -27,6 +27,9 @@ skills:
   - Natural language processing (NLP)
   - Natural language inference
   - Data cleaning
+deckSkills:
+  - Synthetic data generation
+  - Prompt engineering
 highlights:
   - title: 7B LLM on one T4 GPU
     detail: '4-bit QLoRA, LoRA, then DoRA; 43.3M trainable parameters'

@@ -18,6 +18,13 @@ skills:
   - Model evaluation
   - Statistical analysis (bootstrap confidence intervals)
   - Data annotation
+deckSkills:
+  - Computer vision
+  - Transfer learning
+  - CNNs and vision transformers
+  - Ablation studies
+  - Statistical analysis (bootstrap confidence intervals)
+  - Data annotation
 results:
   - label: Majority-class baseline
     value: '0.521'

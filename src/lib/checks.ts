@@ -158,6 +158,9 @@ export function runChecks(c: ContentSet): string[] {
     if (logo && !c.publicFileExists(logo.src)) {
       err(`${p.file}: organisation.logo.src "${logo.src}" does not exist in public/`);
     }
+    for (const s of d.deckSkills ?? []) {
+      if (!d.skills?.includes(s)) err(`${p.file}: deckSkills "${s}" is not in skills`);
+    }
     if (!d.hidden) errors.push(...placeholderErrors(p.file, d, p.body));
     for (const m of (p.body ?? '').matchAll(MD_LINK)) {
       const url = m[1] ?? '';

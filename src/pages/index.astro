@@ -30,7 +30,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: profile.name,
-  description: profile.headline,
+  description: profile.headline.join(' '),
   sameAs: [profile.linkedin, ...(profile.github ? [profile.github] : [])],
   knowsAbout: [...(profile.focus ?? []), ...(profile.languages ?? [])],
   ...(uni ? { affiliation: { '@type': 'CollegeOrUniversity', name: uni.institution } } : {}),
@@ -39,7 +39,7 @@ const jsonLd = {
 
 <Base
   title={`${profile.name}: data science and AI portfolio`}
-  description={profile.headline}
+  description={profile.headline.join(' ')}
   jsonLd={jsonLd}
 >
   <Deck>

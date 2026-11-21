@@ -1,7 +1,11 @@
 {
   "name": "Yeo Zhi Yuan",
   "greeting": "Hi, I'm",
-  "headline": "Data science and AI student at NUS. I fine-tune LLMs, build NLP and computer-vision pipelines, and find out why models fail. Now learning to build AI agents.",
+  "headline": [
+    "Data science and AI student at NUS.",
+    "I fine-tune LLMs, build NLP and computer-vision pipelines, and find out why models fail.",
+    "Now learning to build AI agents."
+  ],
   "focus": [
     "NLP",
     "Computer vision",
