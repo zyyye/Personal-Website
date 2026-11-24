@@ -8,7 +8,7 @@
   ],
   "focus": [
     "NLP",
-    "Computer vision",
+    "Computer Vision",
     "LLM fine-tuning",
     "Agentic AI",
     "Agentic RAG",
@@ -16,7 +16,7 @@
     "Model evaluation"
   ],
   "languages": ["Python", "Java", "C++", "R", "SQL", "HTML"],
-  "tools": ["PyTorch", "Hugging Face", "pandas", "NumPy", "Plotly", "Tableau", "Git"],
+  "tools": ["LangChain", "LangGraph", "PyTorch", "Hugging Face"],
   "location": "Singapore. On exchange at Tsinghua University, Beijing, until Jan 2027.",
   "email": "yeozy2018@gmail.com",
   "linkedin": "https://www.linkedin.com/in/yeo-zhi-yuan",
@@ -29,7 +29,7 @@
     "src": "/images/portrait.jpg",
     "alt": "Portrait of Yeo Zhi Yuan"
   },
-  "targetRoles": ["AI engineer", "data scientist", "data analyst"],
+  "targetRoles": ["AI engineer", "data scientist"],
   "availability": [
     {
       "label": "3-month internship",
