@@ -23,6 +23,7 @@ const when =
   <div
     class:list={['achievement', image && 'achievement--image']}
     data-fit-height={image ? '' : undefined}
+    style={image ? `--image-ratio: ${(image.width / image.height).toFixed(4)}` : undefined}
   >
     <div class="achievement__text" data-fit-height-text>
       <h2 id={titleId} class="page-title">
@@ -111,7 +112,11 @@ const when =
       align-items: start;
     }
     .achievement__image {
-      height: calc(var(--fit-height, 24rem) - var(--title-inset));
+      /* No wider than 35vw, so a landscape certificate cannot squeeze the text column. */
+      height: min(
+        calc(var(--fit-height, 24rem) - var(--title-inset)),
+        calc(35vw / var(--image-ratio, 1))
+      );
       margin-top: var(--title-inset);
     }
     .achievement__image img {

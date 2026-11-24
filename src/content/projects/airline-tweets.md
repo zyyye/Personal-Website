@@ -3,7 +3,7 @@ title: 'Tweet Sentiment: unsupervised NLP on 14,639 airline tweets'
 summary: 'Team NLP project: unsupervised sentiment analysis of 14,639 airline tweets, comparing TF-IDF, sentence-embedding clustering and Twitter-tuned transformers.'
 status: complete
 featured: true
-order: 3
+order: 4
 hidden: false
 period: { start: '2025-08', end: '2025-12' }
 kind: team

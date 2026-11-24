@@ -3,7 +3,7 @@ title: 'POLLUX: a full-stack data visualisation and analytics web app'
 summary: 'NUS Orbital team project: a Streamlit and Supabase web app where anyone can upload a CSV, clean it, chart it 16 ways and run quick predictions.'
 status: complete
 featured: false
-order: 4
+order: 5
 hidden: false
 period: { start: '2025-04', end: '2025-08' }
 kind: team

@@ -10,6 +10,7 @@ const SLIDE_IDS = [
   'hero',
   'about',
   'logiclens',
+  'gaia-agent',
   'deepweeds',
   'airline-tweets',
   'pollux',
@@ -45,7 +46,7 @@ test('home serves one page per item and one taskbar key per group', async ({ pag
     'Home',
     'About',
     'Internship (1)',
-    'Projects (3)',
+    'Projects (4)',
     'Achievements (3)',
     'Contact',
   ]);
@@ -243,6 +244,7 @@ test('no page scrolls sideways', async ({ page }) => {
     '/projects/',
     '/projects/deepweeds/',
     '/projects/logiclens/',
+    '/projects/gaia-agent/',
     '/projects/airline-tweets/',
     '/projects/pollux/',
   ]) {

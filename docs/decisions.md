@@ -147,3 +147,18 @@ The About slide renders about 1,130 to 1,220 px tall on 360x640 and 390x844 phon
 - **Code changes:**
   - Learning entries gain an optional `image`. It uses the same picture shape as the employer logo (`pictureSchema`), and the content check requires the file to exist.
   - `logo-fit.ts` became `fit-height.ts`, with `data-fit-height`, `data-fit-height-text` and `--fit-height`. It now sizes both the employer logo and the certificate.
+
+## 2026-11-24: Hugging Face Agents Course and GAIA capstone (decided by Leo)
+
+- **Course entry:**
+  - `hf-agentic-ai-course` is now completed: "Hugging Face Agents Course", Certificate of Excellence, Nov 2026.
+  - The certificate is rendered from Leo's PDF to `public/images/hf-agents-certificate.webp` (1200 × 839, 40 KB) and shown beside the text, like Orbital's.
+  - Its summary lists the syllabus (agent fundamentals, smolagents, LlamaIndex, LangGraph, agentic RAG, GAIA final project) and links to the capstone.
+- **New project `gaia-agent`:**
+  - Leo's capstone: a LangGraph agent on Claude with three tools (DuckDuckGo search, Claude's server-side web fetch, an isolated Python runner), attachment handling and exact-match answer parsing.
+  - Facts come from the Space's `agent.py`, `app.py` and `requirements.txt`, read 24 Nov 2026. Leo made 8 commits; the other 38 are the course template's. The course pages confirm 20 GAIA level-1 validation questions, exact-match scoring and a 30% pass mark.
+  - "Source code" links to `huggingface.co/spaces/cloudykite/Final_Assignment_Template/tree/main`.
+  - Leo's exact score isn't public (the leaderboard dataset viewer was unavailable), so the page says only that he passed the 30% bar.
+  - It is placed first among projects (order 2); the others moved down one.
+- **Home:** new focus chip "Agentic RAG".
+- **Achievement images:** a landscape certificate could squeeze the text column, so the image width is capped at 35vw (`--image-ratio` set inline). With the cap, the certificate lines up exactly from 1280 px up. At 1024 px it ends a little above the buttons.

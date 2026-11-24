@@ -3,7 +3,7 @@ title: 'DeepWeeds: why a CNN scored below baseline, and how it was fixed'
 summary: Team computer-vision project on 9 weed classes. I traced a below-baseline AlexNet to its causes (macro-F1 0.49 to 0.83) and benchmarked ConvNeXt and DINOv3.
 status: complete
 featured: true
-order: 2
+order: 3
 hidden: false
 period: { start: '2026-01', end: '2026-04' }
 kind: team
