@@ -23,6 +23,8 @@ const { title, description, jsonLd } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark" />
+    {/* Hugging Face answers 404 to a click that carries this site's address as Referer. */}
+    <meta name="referrer" content="no-referrer" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {jsonLd && (
       <script

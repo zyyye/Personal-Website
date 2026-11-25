@@ -149,6 +149,17 @@ function htmlFiles(dir: string): string[] {
   });
 }
 
+test('every built page sends no Referer when a visitor follows a link', () => {
+  // Hugging Face answers 404 to a click that carries this site's address as Referer.
+  const dist = resolve(import.meta.dirname, '../../dist');
+  const files = htmlFiles(dist);
+  expect(files.length).toBeGreaterThan(0);
+  const missing = files.filter(
+    (f) => !readFileSync(f, 'utf8').includes('<meta name="referrer" content="no-referrer">'),
+  );
+  expect(missing).toEqual([]);
+});
+
 test('the built site contains none of the off-site terms', () => {
   const dist = resolve(import.meta.dirname, '../../dist');
   const files = htmlFiles(dist);
