@@ -1,0 +1,17 @@
+// Cloudflare Workers config: serve the built site as plain static files.
+// With this file present, `wrangler deploy` no longer auto-configures the project
+// (which installed @astrojs/cloudflare and KV/Images bindings the site does not use),
+// and preview builds (`wrangler versions upload` / `wrangler preview`) have a config to use.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "personal-website",
+  "compatibility_date": "2026-11-25",
+  "assets": {
+    "directory": "./dist",
+    // Serve dist/404.html with status 404 for unknown paths, instead of an empty 404.
+    "not_found_handling": "404-page",
+  },
+  // Keep the *.workers.dev address and per-version preview URLs on, as they are now.
+  "workers_dev": true,
+  "preview_urls": true,
+}
